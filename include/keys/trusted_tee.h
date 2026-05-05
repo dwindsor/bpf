@@ -11,6 +11,6 @@
 
 #include <keys/trusted-type.h>
 
-extern struct trusted_key_ops trusted_key_tee_ops;
+extern const struct trusted_key_ops trusted_key_tee_ops;
 
 #endif

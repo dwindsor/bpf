@@ -78,7 +78,7 @@ struct trusted_key_ops {
 
 struct trusted_key_source {
 	char *name;
-	struct trusted_key_ops *ops;
+	const struct trusted_key_ops *ops;
 };
 
 extern struct key_type key_type_trusted;

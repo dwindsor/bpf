@@ -6,7 +6,7 @@
 #include <linux/bitops.h>
 #include <linux/printk.h>
 
-extern struct trusted_key_ops pkwm_trusted_key_ops;
+extern const struct trusted_key_ops pkwm_trusted_key_ops;
 
 struct trusted_pkwm_options {
 	u16 wrap_flags;

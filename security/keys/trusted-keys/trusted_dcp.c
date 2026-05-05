@@ -347,7 +347,7 @@ static void trusted_dcp_exit(void)
 	unregister_key_type(&key_type_trusted);
 }
 
-struct trusted_key_ops dcp_trusted_key_ops = {
+const struct trusted_key_ops dcp_trusted_key_ops = {
 	.exit = trusted_dcp_exit,
 	.init = trusted_dcp_init,
 	.seal = trusted_dcp_seal,

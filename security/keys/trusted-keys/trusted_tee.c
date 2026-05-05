@@ -277,7 +277,7 @@ static void trusted_tee_exit(void)
 	tee_client_driver_unregister(&trusted_key_driver);
 }
 
-struct trusted_key_ops trusted_key_tee_ops = {
+const struct trusted_key_ops trusted_key_tee_ops = {
 	.migratable = 0, /* non-migratable */
 	.init = trusted_tee_init,
 	.seal = trusted_tee_seal,

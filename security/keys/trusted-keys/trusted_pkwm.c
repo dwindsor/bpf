@@ -181,7 +181,7 @@ static void trusted_pkwm_exit(void)
 	unregister_key_type(&key_type_trusted);
 }
 
-struct trusted_key_ops pkwm_trusted_key_ops = {
+const struct trusted_key_ops pkwm_trusted_key_ops = {
 	.migratable = 0, /* non-migratable */
 	.init = trusted_pkwm_init,
 	.seal = trusted_pkwm_seal,

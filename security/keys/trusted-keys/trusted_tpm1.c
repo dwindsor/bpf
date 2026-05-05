@@ -987,7 +987,7 @@ static void trusted_tpm_exit(void)
 	}
 }
 
-struct trusted_key_ops trusted_key_tpm_ops = {
+const struct trusted_key_ops trusted_key_tpm_ops = {
 	.migratable = 1, /* migratable by default */
 	.init = trusted_tpm_init,
 	.seal = trusted_tpm_seal,

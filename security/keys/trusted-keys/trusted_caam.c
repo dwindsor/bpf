@@ -179,7 +179,7 @@ static void trusted_caam_exit(void)
 	caam_blob_gen_exit(blobifier);
 }
 
-struct trusted_key_ops trusted_key_caam_ops = {
+const struct trusted_key_ops trusted_key_caam_ops = {
 	.migratable = 0, /* non-migratable */
 	.init = trusted_caam_init,
 	.seal = trusted_caam_seal,

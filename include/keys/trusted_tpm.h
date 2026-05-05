@@ -5,7 +5,7 @@
 #include <keys/trusted-type.h>
 #include <linux/tpm_command.h>
 
-extern struct trusted_key_ops trusted_key_tpm_ops;
+extern const struct trusted_key_ops trusted_key_tpm_ops;
 
 int tpm2_seal_trusted(struct tpm_chip *chip,
 		      struct trusted_key_payload *payload,
