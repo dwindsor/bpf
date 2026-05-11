@@ -15,6 +15,7 @@
 #include <linux/memory.h>
 #include <linux/printk.h>
 #include <linux/slab.h>
+#include <linux/sort.h>
 
 #include <asm/asm-extable.h>
 #include <asm/byteorder.h>
@@ -2792,6 +2793,99 @@ void arch_free_bpf_trampoline(void *image, unsigned int size)
 
 int arch_protect_bpf_trampoline(void *image, unsigned int size)
 {
+	return 0;
+}
+
+static int cmp_ips(const void *a, const void *b)
+{
+	const s64 *ipa = a;
+	const s64 *ipb = b;
+
+	if (*ipa > *ipb)
+		return 1;
+	if (*ipa < *ipb)
+		return -1;
+	return 0;
+}
+
+/*
+ * Emit a balanced binary search dispatcher over the sorted prog addresses
+ * progs[from..to]. At each node we load progs[mid] into TMP_REG_1, compare
+ * against the bpf_func argument (BPF_REG_3 -> x2), and either tail-call to
+ * the matched address, branch into the upper subtree, or descend into the
+ * lower subtree. A "not in table" path falls into the caller-emitted
+ * "BR x_bpf_func" indirect tail call past the end of the dispatcher.
+ *
+ * Per node: 4 (movn/movk*3) + cmp + b.ne + br + b.gt = 8 instructions.
+ * Worst case (BPF_DISPATCHER_MAX = 48 progs) = 1 + 48*8 + 1 = 386 insns
+ * (1544 bytes), comfortably under the PAGE_SIZE/2 dispatcher image budget.
+ */
+static int emit_bpf_dispatcher(struct jit_ctx *ctx, int from, int to,
+			       const s64 *progs)
+{
+	const u8 tmp = bpf2a64[TMP_REG_1];
+	const u8 bpf_func = bpf2a64[BPF_REG_3];
+	int mid, off_jg, jump_off;
+
+	if (from > to)
+		return 0;
+
+	mid = (from + to) / 2;
+
+	emit_addr_mov_i64(tmp, (u64)progs[mid], ctx);
+	emit(A64_CMP(1, bpf_func, tmp), ctx);
+	/* Skip the matched-tail-call when not equal. */
+	emit(A64_B_(A64_COND_NE, 2), ctx);
+	/* Matched: tail-call to the constant-loaded progs[mid]. */
+	emit(A64_BR(tmp), ctx);
+
+	/* If greater, jump past the lower subtree to the upper subtree.
+	 * Patched after the lower subtree has been emitted.
+	 */
+	off_jg = ctx->idx;
+	emit(A64_B_(A64_COND_GT, 0), ctx);
+
+	emit_bpf_dispatcher(ctx, from, mid - 1, progs);
+
+	if (ctx->image && ctx->write) {
+		jump_off = ctx->idx - off_jg;
+		ctx->image[off_jg] = cpu_to_le32(A64_B_(A64_COND_GT, jump_off));
+	}
+
+	emit_bpf_dispatcher(ctx, mid + 1, to, progs);
+
+	return 0;
+}
+
+int arch_prepare_bpf_dispatcher(void *image, void *buf, s64 *funcs,
+				int num_funcs)
+{
+	struct jit_ctx ctx = {
+		.image = (__le32 *)buf,
+		.ro_image = (__le32 *)image,
+		.write = true,
+	};
+	int err;
+
+	if (num_funcs <= 0)
+		return -EINVAL;
+
+	sort(funcs, num_funcs, sizeof(funcs[0]), cmp_ips, NULL);
+
+	/* The arm64 unoptimized static_call trampoline reaches us via BR x16,
+	 * so emit a BTI_JC landing pad. (No-op when CONFIG_ARM64_BTI_KERNEL=n.)
+	 */
+	emit_bti(A64_BTI_JC, &ctx);
+
+	err = emit_bpf_dispatcher(&ctx, 0, num_funcs - 1, funcs);
+	if (err)
+		return err;
+
+	/* No match in the table: tail-call indirectly through the original
+	 * argument. The verifier guarantees it is a valid BPF program.
+	 */
+	emit(A64_BR(bpf2a64[BPF_REG_3]), &ctx);
+
 	return 0;
 }
 
