@@ -26,6 +26,7 @@
 #include <linux/module.h>
 #include <linux/cache.h>
 #include <linux/cpu.h>
+#include <linux/nospec.h>
 #include <linux/audit.h>
 #include <linux/rhashtable.h>
 #include <linux/if_tunnel.h>
@@ -257,6 +258,7 @@ static const struct xfrm_policy_afinfo *xfrm_policy_get_afinfo(unsigned short fa
 
 	if (unlikely(family >= ARRAY_SIZE(xfrm_policy_afinfo)))
 		return NULL;
+	family = array_index_nospec(family, ARRAY_SIZE(xfrm_policy_afinfo));
 	rcu_read_lock();
 	afinfo = rcu_dereference(xfrm_policy_afinfo[family]);
 	if (unlikely(!afinfo))
