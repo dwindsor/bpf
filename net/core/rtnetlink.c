@@ -36,6 +36,7 @@
 #include <linux/if_vlan.h>
 #include <linux/pci.h>
 #include <linux/etherdevice.h>
+#include <linux/nospec.h>
 #include <linux/bpf.h>
 
 #include <linux/uaccess.h>
@@ -376,6 +377,7 @@ static struct rtnl_link *rtnl_get_link(int protocol, int msgtype)
 
 	if (protocol >= ARRAY_SIZE(rtnl_msg_handlers))
 		protocol = PF_UNSPEC;
+	protocol = array_index_nospec(protocol, ARRAY_SIZE(rtnl_msg_handlers));
 
 	tab = rcu_dereference_rtnl(rtnl_msg_handlers[protocol]);
 	if (!tab)
