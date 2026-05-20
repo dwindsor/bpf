@@ -13,6 +13,7 @@
 #include <linux/skbuff.h>
 #include <linux/errno.h>
 #include <linux/netlink.h>
+#include <linux/nospec.h>
 #include <linux/slab.h>
 
 #include <linux/netfilter.h>
@@ -287,17 +288,20 @@ nfnl_hook_entries_head(u8 pf, unsigned int hook, struct net *net, const char *de
 	case NFPROTO_IPV4:
 		if (hook >= ARRAY_SIZE(net->nf.hooks_ipv4))
 			return ERR_PTR(-EINVAL);
+		hook = array_index_nospec(hook, ARRAY_SIZE(net->nf.hooks_ipv4));
 		hook_head = rcu_dereference(net->nf.hooks_ipv4[hook]);
 		break;
 	case NFPROTO_IPV6:
 		if (hook >= ARRAY_SIZE(net->nf.hooks_ipv6))
 			return ERR_PTR(-EINVAL);
+		hook = array_index_nospec(hook, ARRAY_SIZE(net->nf.hooks_ipv6));
 		hook_head = rcu_dereference(net->nf.hooks_ipv6[hook]);
 		break;
 	case NFPROTO_ARP:
 #ifdef CONFIG_NETFILTER_FAMILY_ARP
 		if (hook >= ARRAY_SIZE(net->nf.hooks_arp))
 			return ERR_PTR(-EINVAL);
+		hook = array_index_nospec(hook, ARRAY_SIZE(net->nf.hooks_arp));
 		hook_head = rcu_dereference(net->nf.hooks_arp[hook]);
 #endif
 		break;
@@ -305,6 +309,7 @@ nfnl_hook_entries_head(u8 pf, unsigned int hook, struct net *net, const char *de
 #ifdef CONFIG_NETFILTER_FAMILY_BRIDGE
 		if (hook >= ARRAY_SIZE(net->nf.hooks_bridge))
 			return ERR_PTR(-EINVAL);
+		hook = array_index_nospec(hook, ARRAY_SIZE(net->nf.hooks_bridge));
 		hook_head = rcu_dereference(net->nf.hooks_bridge[hook]);
 #endif
 		break;
