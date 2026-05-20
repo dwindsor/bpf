@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0-only)
 /* Copyright(c) 2015 - 2021 Intel Corporation */
 #include <linux/bitfield.h>
+#include <linux/nospec.h>
 #include <linux/spinlock.h>
 #include <linux/types.h>
 #include "adf_accel_devices.h"
@@ -61,7 +62,7 @@ static adf_pf2vf_blkmsg_provider get_blkmsg_response_provider(u8 type)
 	if (type >= ARRAY_SIZE(pf2vf_blkmsg_providers))
 		return NULL;
 
-	return pf2vf_blkmsg_providers[type];
+	return pf2vf_blkmsg_providers[array_index_nospec(type, ARRAY_SIZE(pf2vf_blkmsg_providers))];
 }
 
 /* Byte pf2vf_blkmsg_data_getter_fn callback */
