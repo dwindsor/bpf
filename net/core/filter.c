@@ -28,6 +28,7 @@
 #include <linux/in.h>
 #include <linux/inet.h>
 #include <linux/netdevice.h>
+#include <linux/nospec.h>
 #include <linux/if_packet.h>
 #include <linux/if_arp.h>
 #include <linux/gfp.h>
@@ -1044,7 +1045,7 @@ static bool chk_code_allowed(u16 code_to_probe)
 	if (code_to_probe >= ARRAY_SIZE(codes))
 		return false;
 
-	return codes[code_to_probe];
+	return codes[array_index_nospec(code_to_probe, ARRAY_SIZE(codes))];
 }
 
 static bool bpf_check_basics_ok(const struct sock_filter *filter,
