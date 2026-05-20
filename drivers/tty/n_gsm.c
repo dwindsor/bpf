@@ -1697,6 +1697,7 @@ static void gsm_control_modem(struct gsm_mux *gsm, const u8 *data, int clen)
 	/* Closed port, or invalid ? */
 	if (addr == 0 || addr >= NUM_DLCI || gsm->dlci[addr] == NULL)
 		return;
+	addr = array_index_nospec(addr, NUM_DLCI);
 	dlci = gsm->dlci[addr];
 
 	/* Must be at least one byte following the EA */
@@ -4288,6 +4289,7 @@ static int gsmtty_install(struct tty_driver *driver, struct tty_struct *tty)
 
 	if (mux >= MAX_MUX)
 		return -ENXIO;
+	mux = array_index_nospec(mux, MAX_MUX);
 	/* FIXME: we need to lock gsm_mux for lifetimes of ttys eventually */
 	if (gsm_mux[mux] == NULL)
 		return -EUNATCH;
