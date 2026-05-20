@@ -12,6 +12,7 @@
  */
 
 #include <linux/gfp.h>
+#include <linux/nospec.h>
 #include <linux/unaligned.h>
 #include "tpm.h"
 
@@ -236,6 +237,7 @@ static bool tpm2_map_to_phandle(struct tpm_space *space, void *handle)
 	i = 0xFFFFFF - (vhandle & 0xFFFFFF);
 	if (i >= ARRAY_SIZE(space->context_tbl) || !space->context_tbl[i])
 		return false;
+	i = array_index_nospec(i, ARRAY_SIZE(space->context_tbl));
 
 	phandle = space->context_tbl[i];
 	*((__be32 *)handle) = cpu_to_be32(phandle);
