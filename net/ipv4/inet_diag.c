@@ -13,6 +13,7 @@
 #include <linux/slab.h>
 #include <linux/cache.h>
 #include <linux/init.h>
+#include <linux/nospec.h>
 #include <linux/time.h>
 
 #include <net/icmp.h>
@@ -51,6 +52,7 @@ static const struct inet_diag_handler *inet_diag_lock_handler(int proto)
 
 	if (proto < 0 || proto >= IPPROTO_MAX)
 		return NULL;
+	proto = array_index_nospec(proto, IPPROTO_MAX);
 
 	if (!READ_ONCE(inet_diag_table[proto]))
 		sock_load_diag_module(AF_INET, proto);
