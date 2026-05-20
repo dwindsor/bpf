@@ -656,7 +656,7 @@ static void k_spec(struct vc_data *vc, unsigned char value, char up_flag)
 	     kbd->kbdmode == VC_OFF) &&
 	     value != KVAL(K_SAK))
 		return;		/* SAK is allowed even in raw mode */
-	fn_handler[value](vc);
+	fn_handler[array_index_nospec(value, ARRAY_SIZE(fn_handler))](vc);
 }
 
 static void k_lowercase(struct vc_data *vc, unsigned char value, char up_flag)
