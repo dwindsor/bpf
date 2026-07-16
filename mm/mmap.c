@@ -48,6 +48,7 @@
 #include <linux/sched/mm.h>
 #include <linux/ksm.h>
 #include <linux/memfd.h>
+#include <linux/mmap_policy.h>
 
 #include <linux/uaccess.h>
 #include <asm/cacheflush.h>
@@ -859,6 +860,13 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
 		return -ENOMEM;
 	if (offset_in_page(addr))
 		return -EINVAL;
+
+	/*
+	 * Let an installed BPF mmap placement policy transform the baseline
+	 * address.  The helper re-validates any policy-chosen address and
+	 * returns addr unchanged on MAP_FIXED, no active policy, or failure.
+	 */
+	addr = mmap_policy_get_unmapped_area(addr, len, pgoff, flags, vm_flags);
 
 	error = security_mmap_addr(addr);
 	return error ? error : addr;

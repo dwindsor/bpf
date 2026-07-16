@@ -1509,6 +1509,25 @@ config LAZY_MMU_MODE_KUNIT_TEST
 
 	  If unsure, say N.
 
+config BPF_MMAP_POLICY
+	bool "Programmable mmap placement policy (BPF struct_ops)"
+	depends on BPF_SYSCALL && MMU
+	default n
+	help
+	  Add a BPF struct_ops type (mmap_policy_ops) whose single callback is
+	  consulted inside the mmap placement path (__get_unmapped_area) after
+	  the arch/file allocator has produced a baseline address.  A verified
+	  BPF program can transform that address to implement per-mapping ASLR
+	  entropy, guard-region insertion, or exec-vs-data arena separation.
+
+	  The kernel re-validates any policy-chosen address (alignment, bounds,
+	  non-overlap) under the mmap write lock and silently falls back to the
+	  baseline on any failure, so a buggy or hostile policy cannot make a
+	  mapping fail or overlap an existing one.  Baseline placement behaviour
+	  is unchanged when no policy is attached.
+
+	  If unsure, say N.
+
 source "mm/damon/Kconfig"
 
 endmenu
