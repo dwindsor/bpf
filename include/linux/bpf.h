@@ -1514,6 +1514,9 @@ int bpf_trampoline_link_prog(struct bpf_tramp_node *node,
 int bpf_trampoline_unlink_prog(struct bpf_tramp_node *node,
 			       struct bpf_trampoline *tr,
 			       struct bpf_prog *tgt_prog);
+void bpf_trampoline_tracing_exec_order(struct bpf_trampoline *tr,
+				       struct bpf_tramp_node *node,
+				       u32 *phase, u32 *index, u32 *count);
 struct bpf_trampoline *bpf_trampoline_get(u64 key,
 					  struct bpf_attach_target_info *tgt_info);
 void bpf_trampoline_put(struct bpf_trampoline *tr);
@@ -1614,6 +1617,15 @@ static inline int bpf_trampoline_unlink_prog(struct bpf_tramp_node *node,
 					     struct bpf_prog *tgt_prog)
 {
 	return -ENOTSUPP;
+}
+static inline void bpf_trampoline_tracing_exec_order(struct bpf_trampoline *tr,
+						     struct bpf_tramp_node *node,
+						     u32 *phase, u32 *index,
+						     u32 *count)
+{
+	*phase = 0;
+	*index = 0;
+	*count = 0;
 }
 static inline struct bpf_trampoline *bpf_trampoline_get(u64 key,
 							struct bpf_attach_target_info *tgt_info)

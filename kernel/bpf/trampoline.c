@@ -955,6 +955,75 @@ int bpf_trampoline_link_prog(struct bpf_tramp_node *node,
 	return err;
 }
 
+/* Map a trampoline prog kind to the UAPI execution phase enum. The kernel's
+ * internal BPF_TRAMP_* kinds are not stable UAPI, so translate explicitly.
+ */
+static u32 tramp_kind_to_exec_phase(enum bpf_tramp_prog_type kind)
+{
+	switch (kind) {
+	case BPF_TRAMP_FENTRY:
+		return BPF_TRAMP_EXEC_FENTRY;
+	case BPF_TRAMP_MODIFY_RETURN:
+		return BPF_TRAMP_EXEC_FMOD_RET;
+	case BPF_TRAMP_FEXIT:
+	default:
+		return BPF_TRAMP_EXEC_FEXIT;
+	}
+}
+
+/**
+ * bpf_trampoline_tracing_exec_order - authoritative per-hook execution order
+ * @tr: the trampoline @node is attached to
+ * @node: a linked trampoline node (from a tracing link)
+ * @phase: out, the execution phase (enum bpf_tramp_exec_phase)
+ * @index: out, 0-based position of @node within its phase (lower runs first)
+ * @count: out, number of programs in that phase
+ *
+ * A trampoline dispatches programs as fentry -> fmod_ret -> fexit. Within a
+ * phase the kernel walks progs_hlist[kind] head-first and the JIT emits the
+ * calls in that walk order (see bpf_trampoline_get_progs() and invoke_bpf()),
+ * so the head of the list runs first. We report that position directly, which
+ * makes the order authoritative rather than inferred from link-id heuristics.
+ *
+ * Must be called in process context; takes the trampoline lock.
+ */
+void bpf_trampoline_tracing_exec_order(struct bpf_trampoline *tr,
+				       struct bpf_tramp_node *node,
+				       u32 *phase, u32 *index, u32 *count)
+{
+	struct bpf_tramp_node *pos;
+	enum bpf_tramp_prog_type kind;
+	u32 idx = 0;
+
+	*phase = BPF_TRAMP_EXEC_FENTRY;
+	*index = 0;
+	*count = 0;
+
+	kind = bpf_attach_type_to_tramp(node->link->prog);
+	/* FSESSION is split into an fentry + fexit pair at link time; the node
+	 * passed here is the fentry half, which lives on the FENTRY list.
+	 */
+	if (kind == BPF_TRAMP_FSESSION)
+		kind = BPF_TRAMP_FENTRY;
+	if (kind >= BPF_TRAMP_MAX) {
+		/* BPF_TRAMP_REPLACE (freplace): not a phased tracing prog. */
+		*phase = BPF_TRAMP_EXEC_FENTRY;
+		*index = 0;
+		*count = 1;
+		return;
+	}
+
+	trampoline_lock(tr);
+	hlist_for_each_entry(pos, &tr->progs_hlist[kind], tramp_hlist) {
+		if (pos == node)
+			*index = idx;
+		idx++;
+	}
+	*phase = tramp_kind_to_exec_phase(kind);
+	*count = tr->progs_cnt[kind];
+	trampoline_unlock(tr);
+}
+
 static int __bpf_trampoline_unlink_prog(struct bpf_tramp_node *node,
 					struct bpf_trampoline *tr,
 					struct bpf_prog *tgt_prog,

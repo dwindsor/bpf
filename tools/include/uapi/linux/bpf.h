@@ -1189,6 +1189,17 @@ enum bpf_link_type {
 
 #define MAX_BPF_LINK_TYPE __MAX_BPF_LINK_TYPE
 
+/* Execution phase of a program on a trampoline (fentry/fexit/fmod_ret and
+ * BPF-LSM). A trampoline always dispatches its programs in this order:
+ *   fentry -> fmod_ret -> (original function) -> fexit
+ * Reported per tracing link via bpf_link_info.tracing.exec_phase.
+ */
+enum bpf_tramp_exec_phase {
+	BPF_TRAMP_EXEC_FENTRY = 0,
+	BPF_TRAMP_EXEC_FMOD_RET = 1,
+	BPF_TRAMP_EXEC_FEXIT = 2,
+};
+
 enum bpf_perf_event_type {
 	BPF_PERF_EVENT_UNSPEC = 0,
 	BPF_PERF_EVENT_UPROBE = 1,
@@ -6822,6 +6833,18 @@ struct bpf_link_info {
 			__u32 target_btf_id; /* BTF type id inside the object */
 			__u32 :32;
 			__u64 cookie;
+			/* Per-hook trampoline execution order. A trampoline runs its
+			 * attached programs as: fentry -> fmod_ret -> fexit. exec_phase
+			 * is which of those this program runs in; exec_index is its
+			 * 0-based position within that phase (lower runs first);
+			 * exec_count is the number of programs in that phase. This is
+			 * authoritative: it reflects the kernel's actual dispatch order,
+			 * not an inference. Zero-initialized fields on older kernels.
+			 */
+			__u32 exec_phase; /* enum bpf_tramp_exec_phase */
+			__u32 exec_index;
+			__u32 exec_count;
+			__u32 :32;
 		} tracing;
 		struct {
 			__u64 cgroup_id;

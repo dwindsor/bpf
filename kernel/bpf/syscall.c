@@ -3596,6 +3596,11 @@ static int bpf_tracing_link_fill_link_info(const struct bpf_link *link,
 	bpf_trampoline_unpack_key(tr_link->trampoline->key,
 				  &info->tracing.target_obj_id,
 				  &info->tracing.target_btf_id);
+	bpf_trampoline_tracing_exec_order(tr_link->trampoline,
+					  &tr_link->link.node,
+					  &info->tracing.exec_phase,
+					  &info->tracing.exec_index,
+					  &info->tracing.exec_count);
 
 	return 0;
 }
