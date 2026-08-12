@@ -972,6 +972,7 @@ void bpf_map_put_with_uref(struct bpf_map *map)
 	bpf_map_put_uref(map);
 	bpf_map_put(map);
 }
+EXPORT_SYMBOL_NS(bpf_map_put_with_uref, "BPF_INTERNAL");
 
 static int bpf_map_release(struct inode *inode, struct file *filp)
 {
@@ -1034,6 +1035,7 @@ static void bpf_map_show_fdinfo(struct seq_file *m, struct file *filp)
 		   bpf_map_memory_usage(map),
 		   map->id,
 		   READ_ONCE(map->frozen));
+	seq_printf(m, "sealed:\t%d\n", map->sealed ? 1 : 0);
 	if (type) {
 		seq_printf(m, "owner_prog_type:\t%u\n", type);
 		seq_printf(m, "owner_jited:\t%u\n", jited);
@@ -1376,6 +1378,7 @@ static int map_create_alloc(union bpf_attr *attr, bpfptr_t uattr, struct bpf_ver
 	u32 map_type = attr->map_type;
 	struct bpf_map *map;
 	bool token_flag;
+	bool seal_flag;
 	int err;
 
 	err = CHECK_ATTR(BPF_MAP_CREATE);
@@ -1389,6 +1392,16 @@ static int map_create_alloc(union bpf_attr *attr, bpfptr_t uattr, struct bpf_ver
 	 */
 	token_flag = attr->map_flags & BPF_F_TOKEN_FD;
 	attr->map_flags &= ~BPF_F_TOKEN_FD;
+
+	/* Same treatment for BPF_F_SEALED: it is not a per-map-type flag, and
+	 * every map type rejects flags outside its own mask.
+	 */
+	seal_flag = attr->map_flags & BPF_F_SEALED;
+	attr->map_flags &= ~BPF_F_SEALED;
+	if (seal_flag && !capable(CAP_SYS_ADMIN)) {
+		bpf_log(log, "BPF_F_SEALED requires CAP_SYS_ADMIN.\n");
+		return -EPERM;
+	}
 
 	if (attr->btf_vmlinux_value_type_id) {
 		if (attr->map_type != BPF_MAP_TYPE_STRUCT_OPS) {
@@ -1604,6 +1617,32 @@ static int map_create_alloc(union bpf_attr *attr, bpfptr_t uattr, struct bpf_ver
 		goto free_map;
 	}
 
+	if (seal_flag) {
+		/* Sealing freezes the map at creation time, so it is limited to
+		 * the maps that BPF_MAP_FREEZE itself accepts. Maps with
+		 * special fields (spin locks, timers, kptrs, ...) are not
+		 * freezable and so cannot be sealed.
+		 */
+		if (map->map_type == BPF_MAP_TYPE_STRUCT_OPS ||
+		    !IS_ERR_OR_NULL(map->record)) {
+			bpf_log(log, "BPF_F_SEALED is not supported by this map.\n");
+			err = -EOPNOTSUPP;
+			goto free_map;
+		}
+		map->sealed = true;
+		/* Frozen from the outset: there is no window in which user
+		 * space can write to the map, unlike a create-then-freeze
+		 * sequence. Set before the map is reachable from anywhere, so
+		 * freeze_mutex is not needed here.
+		 */
+		map->frozen = true;
+		/* Put the flag back now that the per-map-type checks are done,
+		 * so that it shows up in map info: unlike BPF_F_TOKEN_FD, this
+		 * is a permanent property of the map rather than of an fd.
+		 */
+		map->map_flags |= BPF_F_SEALED;
+	}
+
 	*mapp = map;
 	*tokenp = token;
 	return 0;
@@ -1658,6 +1697,15 @@ static int map_create(union bpf_attr *attr, bpfptr_t uattr, struct bpf_common_at
 	bpf_map_save_memcg(map);
 	bpf_token_put(token);
 
+	/* A sealed map holds a reference to itself that is never dropped, so it
+	 * outlives every fd and every id lookup. The user reference is included
+	 * so that map_release_uref() callbacks never run either. Taken before
+	 * bpf_map_new_fd() hands the map to user space, so the map is already
+	 * permanent by the time anything can put it.
+	 */
+	if (map->sealed)
+		bpf_map_inc_with_uref(map);
+
 	err = bpf_map_new_fd(map, f_flags);
 	if (err < 0) {
 		/* failed to allocate fd.
@@ -1666,6 +1714,8 @@ static int map_create(union bpf_attr *attr, bpfptr_t uattr, struct bpf_common_at
 		 * to the userspace and the userspace may
 		 * have refcnt-ed it through BPF_MAP_GET_FD_BY_ID.
 		 */
+		if (map->sealed)
+			bpf_map_put_with_uref(map);
 		bpf_map_put_with_uref(map);
 		return err;
 	}
@@ -2309,6 +2359,13 @@ static int map_freeze(const union bpf_attr *attr)
 
 	if (map->map_type == BPF_MAP_TYPE_STRUCT_OPS || !IS_ERR_OR_NULL(map->record))
 		return -ENOTSUPP;
+
+	/* A sealed map is frozen from creation. Say so, rather than falling
+	 * through to the -EPERM that the write-permission check below would
+	 * return for any frozen map.
+	 */
+	if (map->sealed)
+		return -EBUSY;
 
 	if (!(map_get_sys_perms(map, f) & FMODE_CAN_WRITE))
 		return -EPERM;

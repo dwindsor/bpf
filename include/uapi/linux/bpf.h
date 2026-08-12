@@ -1466,6 +1466,15 @@ enum {
 
 /* Enable BPF ringbuf overwrite mode */
 	BPF_F_RB_OVERWRITE	= (1U << 19),
+
+/* Create the map sealed. A sealed map is frozen from the moment it is
+ * created, so user space can never write to it, the freeze can never be
+ * lifted, and the map is never freed, so it stays alive until the machine
+ * reboots. BPF programs can still update a sealed map unless it also has
+ * BPF_F_RDONLY_PROG. Requires CAP_SYS_ADMIN, and is only supported by the
+ * map types that BPF_MAP_FREEZE supports.
+ */
+	BPF_F_SEALED		= (1U << 20),
 };
 
 /* Flags for BPF_PROG_QUERY. */

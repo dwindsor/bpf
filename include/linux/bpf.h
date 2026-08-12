@@ -334,6 +334,12 @@ struct bpf_map {
 	struct bpf_map_owner *owner;
 	bool bypass_spec_v1;
 	bool frozen; /* write-once; write-protected by freeze_mutex */
+	/* Set from BPF_F_SEALED at creation and never cleared. A sealed map is
+	 * frozen from the outset, can never be thawed, and holds a
+	 * self-reference that is never dropped, so it lives until reboot.
+	 * Immutable once the map is reachable from user space.
+	 */
+	bool sealed;
 	bool free_after_mult_rcu_gp;
 	bool free_after_rcu_gp;
 	atomic64_t sleepable_refcnt;
