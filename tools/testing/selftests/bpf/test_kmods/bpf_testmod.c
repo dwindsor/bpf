@@ -1465,6 +1465,38 @@ __bpf_kfunc void bpf_kfunc_trigger_ctx_check(void)
 	irq_work_queue(&ctx_check_irq);
 }
 
+/* Test only: clear the sealed state of a map and drop the self-reference that
+ * sealing took, so selftests can free sealed maps instead of pinning them
+ * until the machine reboots. The kernel deliberately offers no way to unseal
+ * a map.
+ */
+__bpf_kfunc int bpf_kfunc_map_force_unseal(int map_fd)
+{
+	struct bpf_map *map;
+
+	map = bpf_map_get(map_fd);
+	if (IS_ERR(map))
+		return PTR_ERR(map);
+
+	if (!map->sealed) {
+		bpf_map_put(map);
+		return -EINVAL;
+	}
+
+	map->sealed = false;
+	/* The map stays frozen: freezing is irrevocable for every map, and
+	 * nothing in the kernel clears map->frozen.
+	 */
+
+	/* Two puts: one for the reference sealing took, one for the lookup
+	 * above. The caller still holds map_fd, so the map cannot be freed
+	 * underneath us here.
+	 */
+	bpf_map_put_with_uref(map);
+	bpf_map_put(map);
+	return 0;
+}
+
 BTF_KFUNCS_START(bpf_testmod_check_kfunc_ids)
 BTF_ID_FLAGS(func, bpf_testmod_test_mod_kfunc, KF_SPINLOCK_SAFE)
 BTF_ID_FLAGS(func, bpf_kfunc_call_test1)
@@ -1521,6 +1553,7 @@ BTF_ID_FLAGS(func, bpf_kfunc_implicit_arg, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, bpf_kfunc_implicit_arg_legacy, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, bpf_kfunc_implicit_arg_legacy_impl)
 BTF_ID_FLAGS(func, bpf_kfunc_trigger_ctx_check)
+BTF_ID_FLAGS(func, bpf_kfunc_map_force_unseal, KF_SLEEPABLE)
 BTF_KFUNCS_END(bpf_testmod_check_kfunc_ids)
 
 static int bpf_testmod_ops_init(struct btf *btf)
@@ -2185,3 +2218,4 @@ module_exit(bpf_testmod_exit);
 MODULE_AUTHOR("Andrii Nakryiko");
 MODULE_DESCRIPTION("BPF selftests module");
 MODULE_LICENSE("Dual BSD/GPL");
+MODULE_IMPORT_NS("BPF_INTERNAL");
