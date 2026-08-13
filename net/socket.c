@@ -2350,10 +2350,9 @@ int do_sock_setsockopt(struct socket *sock, bool compat, int level,
 	if (err)
 		goto out_put;
 
-	if (!compat)
-		err = BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock->sk, &level, &optname,
-						     optval, &optlen,
-						     &kernel_optval);
+	err = BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock->sk, compat, &level, &optname,
+					     optval, &optlen,
+					     &kernel_optval);
 	if (err < 0)
 		goto out_put;
 	if (err > 0) {
@@ -2451,8 +2450,7 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
 	if (err)
 		return err;
 
-	if (!compat)
-		copy_from_sockptr(&max_optlen, optlen, sizeof(int));
+	copy_from_sockptr(&max_optlen, optlen, sizeof(int));
 
 	ops = READ_ONCE(sock->ops);
 	if (level == SOL_SOCKET) {
@@ -2481,10 +2479,9 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
 		err = -EOPNOTSUPP;
 	}
 
-	if (!compat)
-		err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, level, optname,
-						     optval, optlen, max_optlen,
-						     err);
+	err = BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock->sk, compat, level, optname,
+					     optval, optlen, max_optlen,
+					     err);
 
 	return err;
 }
