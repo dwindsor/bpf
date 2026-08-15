@@ -301,6 +301,59 @@ __bpf_kfunc int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__st
 }
 
 /**
+ * bpf_set_file_xattr - set an xattr through an open file
+ * @file: file whose xattr should be set
+ * @name__str: name of the xattr
+ * @value_p: xattr value
+ * @flags: flags to pass into filesystem operations
+ *
+ * Set xattr *name__str* on *file*. Only security.bpf.* xattrs are allowed.
+ * Unlike bpf_set_dentry_xattr(), this interface is directly usable from
+ * sleepable file LSM hooks and honors the file's mount and idmap.
+ *
+ * Return: 0 on success, a negative value on error.
+ */
+__bpf_kfunc int bpf_set_file_xattr(struct file *file, const char *name__str,
+				   const struct bpf_dynptr *value_p, int flags)
+{
+	const struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
+	struct dentry *dentry = file_dentry(file);
+	struct mnt_idmap *idmap = file_mnt_idmap(file);
+	struct inode *inode = d_inode(dentry);
+	const void *value;
+	u32 value_len;
+	int ret;
+
+	if (!inode)
+		return -EINVAL;
+
+	value_len = __bpf_dynptr_size(value_ptr);
+	value = __bpf_dynptr_data(value_ptr, value_len);
+	if (!value)
+		return -EINVAL;
+
+	if (!match_security_bpf_prefix(name__str))
+		return -EPERM;
+
+	ret = mnt_want_write_file(file);
+	if (ret)
+		return ret;
+
+	inode_lock(inode);
+	ret = inode_permission(idmap, inode, MAY_WRITE);
+	if (!ret)
+		ret = __vfs_setxattr(idmap, dentry, inode, name__str,
+				     value, value_len, flags);
+	inode_unlock(inode);
+
+	if (!ret)
+		fsnotify_xattr(dentry);
+	mnt_drop_write_file(file);
+
+	return ret;
+}
+
+/**
  * bpf_remove_dentry_xattr - remove a xattr of a dentry
  * @dentry: dentry to get xattr from
  * @name__str: name of the xattr
@@ -428,6 +481,7 @@ BTF_ID_FLAGS(func, bpf_path_d_path)
 BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE)
 BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE)
 BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE)
+BTF_ID_FLAGS(func, bpf_set_file_xattr, KF_SLEEPABLE)
 BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE)
 BTF_ID_FLAGS(func, bpf_real_data_inode, KF_SLEEPABLE | KF_RET_NULL)
 BTF_ID_FLAGS(func, bpf_init_inode_xattr)
