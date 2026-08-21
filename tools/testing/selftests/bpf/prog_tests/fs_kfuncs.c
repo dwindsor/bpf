@@ -10,6 +10,7 @@
 #include "test_get_xattr.skel.h"
 #include "test_set_remove_xattr.skel.h"
 #include "test_fsverity.skel.h"
+#include "test_set_file_xattr.skel.h"
 
 static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
 
@@ -268,6 +269,57 @@ out:
 	remove(testfile);
 }
 
+static void test_set_file_xattr(void)
+{
+	struct test_set_file_xattr *skel = NULL;
+	const char *path = "/tmp/test_progs_set_file_xattr";
+	char value[64] = {};
+	int fd = -1, err;
+
+	remove(path);
+	fd = open(path, O_CREAT | O_RDWR, 0600);
+	if (!ASSERT_GE(fd, 0, "create_set_file_xattr"))
+		return;
+	close(fd);
+	fd = -1;
+
+	skel = test_set_file_xattr__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "test_set_file_xattr__open_and_load"))
+		goto out;
+
+	skel->bss->monitored_pid = getpid();
+	err = test_set_file_xattr__attach(skel);
+	if (!ASSERT_OK(err, "test_set_file_xattr__attach"))
+		goto out;
+
+	/* Arm only after the skeleton has attached: libbpf itself opens files
+	 * while loading, and this test is about the explicit target below.
+	 */
+	skel->bss->armed = true;
+	fd = open(path, O_RDWR);
+	if (!ASSERT_GE(fd, 0, "open_set_file_xattr"))
+		goto out;
+	close(fd);
+	fd = -1;
+
+	ASSERT_EQ(skel->bss->hook_ran, true, "file_open_hook_ran");
+	ASSERT_EQ(skel->data->set_result, 0, "set_file_xattr_result");
+	ASSERT_EQ(skel->data->forbidden_result, -EPERM, "set_file_xattr_forbidden");
+
+	err = getxattr(path, "security.bpf.file_test", value, sizeof(value));
+	if (!ASSERT_EQ(err, (int)sizeof(skel->data->xattr_value), "get_file_xattr_size"))
+		goto out;
+	ASSERT_EQ(memcmp(value, skel->data->xattr_value,
+			 sizeof(skel->data->xattr_value)), 0, "get_file_xattr_value");
+
+out:
+	if (fd >= 0)
+		close(fd);
+	test_set_file_xattr__destroy(skel);
+	removexattr(path, "security.bpf.file_test");
+	remove(path);
+}
+
 void test_fs_kfuncs(void)
 {
 	/* Matches xattr_names in progs/test_get_xattr.c */
@@ -288,4 +340,7 @@ void test_fs_kfuncs(void)
 
 	if (test__start_subtest("fsverity"))
 		test_fsverity();
+
+	if (test__start_subtest("set_file_xattr"))
+		test_set_file_xattr();
 }
