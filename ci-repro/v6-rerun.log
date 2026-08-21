@@ -1,0 +1,1861 @@
++ awk '/^Subject: \[PATCH v6/,/^v5: https/' v6/0000-cover-letter.patch
++ '[' -s /tmp/v6-cover-body.txt ']'
++ git rebase --autostash origin/master
+Current branch bpf-init-inode-xattr-v6 is up to date.
++ git log --oneline origin/master..HEAD
+0f1142ceada0 selftests/bpf: add tests for bpf_init_inode_xattr kfunc
+8c16d83b9e6d bpf: add bpf_init_inode_xattr kfunc for atomic inode labeling
+d48e74490305 security: add security_lsmxattr_add()
+196d5578c9cc security: introduce struct lsm_xattrs
+++ nproc
++ make -j16 bzImage
+  DESCEND bpf/resolve_btfids
+  DESCEND objtool
+  UPD     include/config/kernel.release
+  UPD     include/generated/utsrelease.h
+  CC      init/version.o
+  CC      kernel/sys.o
+  AR      init/built-in.a
+  CC      drivers/base/firmware_loader/main.o
+  CC      kernel/module/main.o
+  AR      drivers/base/firmware_loader/built-in.a
+  AR      drivers/base/built-in.a
+  AR      drivers/built-in.a
+  AR      kernel/module/built-in.a
+  AR      kernel/built-in.a
+  AR      built-in.a
+  AR      built-in-fixup.a
+  COPY    vmlinux.a
+  LD      vmlinux.o
+  MODPOST vmlinux.symvers
+  UPD     include/generated/utsversion.h
+  CC      init/version-timestamp.o
+  KSYMS   .tmp_vmlinux0.kallsyms.S
+  AS      .tmp_vmlinux0.kallsyms.o
+  LD      .tmp_vmlinux1
+  BTF     .tmp_vmlinux1
+  NM      .tmp_vmlinux1.syms
+  KSYMS   .tmp_vmlinux1.kallsyms.S
+  AS      .tmp_vmlinux1.kallsyms.o
+  LD      .tmp_vmlinux2
+  NM      .tmp_vmlinux2.syms
+  KSYMS   .tmp_vmlinux2.kallsyms.S
+  AS      .tmp_vmlinux2.kallsyms.o
+  LD      vmlinux.unstripped
+  BTFIDS  vmlinux.unstripped
+  NM      System.map
+  SORTTAB vmlinux.unstripped
+  OBJCOPY vmlinux
+  GEN     modules.builtin.modinfo
+  GEN     modules.builtin
+  CC      arch/x86/boot/version.o
+  VOFFSET arch/x86/boot/compressed/../voffset.h
+  OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  CC      arch/x86/boot/compressed/kaslr.o
+  CC      arch/x86/boot/compressed/misc.o
+  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
+  MKPIGGY arch/x86/boot/compressed/piggy.S
+  AS      arch/x86/boot/compressed/piggy.o
+  LD      arch/x86/boot/compressed/vmlinux
+  ZOFFSET arch/x86/boot/zoffset.h
+  OBJCOPY arch/x86/boot/vmlinux.bin
+  AS      arch/x86/boot/header.o
+  LD      arch/x86/boot/setup.elf
+  OBJCOPY arch/x86/boot/setup.bin
+  BUILD   arch/x86/boot/bzImage
+Kernel: arch/x86/boot/bzImage is ready  (#81)
+++ nproc
++ make -C tools/testing/selftests/bpf -j16 BPF_STRICT_BUILD=0 test_progs
+make: Entering directory '/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf'
+  GEN      vmlinux.h
+make -C libarena libarena.skel.h BPFTOOL="/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/sbin/bpftool" INCLUDE_DIR="/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include" LIBBPF_INCLUDE="/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include" BPFOBJ="/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/build/libbpf/libbpf.a" LDLIBS="-lelf -lz -lrt -lpthread  -lzstd" CLANG="clang" BPF_CFLAGS="-g -Wall -Werror -D__TARGET_ARCH_x86 -mlittle-endian -I/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include -I/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf -I/home/dave/src/kernelsource.google.com/bpf-next/tools/include/uapi -I/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/libarena/include -I/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/usr/include -std=gnu11 -fno-strict-aliasing -Wno-microsoft-anon-tag -fms-extensions -Wno-compare-distinct-pointer-types -Wno-initializer-overrides  -idirafter /usr/lib/llvm-21/lib/clang/21/include -idirafter /usr/local/include -idirafter /usr/include/x86_64-linux-gnu -idirafter /usr/include   " BPF_TARGET_ENDIAN="--target=bpfel" Q="@"
+  CLNG-BPF [test_progs] bpf_qdisc_dynptr_use_after_invalidate_clone.bpf.o
+  CLNG-BPF [test_progs] bpf_qdisc_fail__incompl_ops.bpf.o
+  CLNG-BPF [test_progs] bpf_qdisc_fail__invalid_dynptr.bpf.o
+  CLNG-BPF [test_progs] bpf_qdisc_fail__invalid_dynptr_cross_frame.bpf.o
+make[1]: 'libarena.skel.h' is up to date.
+  CLNG-BPF [test_progs] bpf_qdisc_fail__invalid_dynptr_slice.bpf.o
+  CLNG-BPF [test_progs] bpf_qdisc_fifo.bpf.o
+  CLNG-BPF [test_progs] bpf_qdisc_fq.bpf.o
+  CLNG-BPF [test_progs] cgroup_iter_memcg.bpf.o
+  CLNG-BPF [test_progs] lwt_misc.bpf.o
+  CLNG-BPF [test_progs] mptcp_sock.bpf.o
+  CLNG-BPF [test_progs] profiler1.bpf.o
+  CLNG-BPF [test_progs] mptcp_subflow.bpf.o
+  CLNG-BPF [test_progs] profiler3.bpf.o
+  CLNG-BPF [test_progs] profiler2.bpf.o
+  CLNG-BPF [test_progs] test_bpf_nf.bpf.o
+  CLNG-BPF [test_progs] test_init_inode_xattr.bpf.o
+progs/bpf_qdisc_fail__invalid_dynptr_cross_frame.c:14:2: error: call to undeclared function 'bpf_kfree_skb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |         bpf_kfree_skb(skb);
+      |         ^
+progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
+      |                                          ~~~  ^
+progs/mptcp_sock.c:49:57: error: no member named 'is_mptcp' in 'struct tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
+      |                                                           ~~~  ^
+progs/mptcp_sock.c:69:25: error: no member named 'token' in 'struct mptcp_sock'
+   69 |                 storage->token = msk->token;
+      |                                  ~~~  ^
+progs/mptcp_sock.c:70:43: error: no member named 'ca_name' in 'struct mptcp_sock'
+   70 |                 __builtin_memcpy(storage->ca_name, msk->ca_name, TCP_CA_NAME_MAX);
+      |                                                    ~~~  ^
+progs/mptcp_sock.c:71:25: error: no member named 'first' in 'struct mptcp_sock'
+   71 |                 storage->first = msk->first;
+      |                                  ~~~  ^
+progs/mptcp_sock.c:85:16: error: no member named 'token' in 'struct mptcp_sock'
+   85 |                 token = msk->token;
+      |                         ~~~  ^
+progs/test_bpf_nf.c:200:7: error: no member named 'mark' in 'struct nf_conn'
+  200 |                 ct->mark = 77;
+      |                 ~~  ^
+progs/test_bpf_nf.c:231:38: error: no member named 'mark' in 'struct nf_conn'
+  231 |                                 test_insert_lookup_mark = ct_lk->mark;
+      |                                                           ~~~~~  ^
+progs/test_bpf_nf.c:253:11: error: no member named 'mark' in 'struct nf_conn'
+  253 |                 if (ct->mark == 42) {
+      |                     ~~  ^
+progs/test_bpf_nf.c:254:8: error: no member named 'mark' in 'struct nf_conn'
+  254 |                         ct->mark++;
+      |                         ~~  ^
+progs/test_bpf_nf.c:255:33: error: no member named 'mark' in 'struct nf_conn'
+  255 |                         test_exist_lookup_mark = ct->mark;
+      |                                                  ~~  ^
+progs/bpf_qdisc_fail__invalid_dynptr.c:22:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   22 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+progs/bpf_qdisc_fq.c:275:11: error: call to undeclared function 'bpf_skb_get_hash'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  275 |                         hash = bpf_skb_get_hash(skb) & q.orphan_mask;
+      |                                ^
+In file included from progs/mptcp_subflow.c:7:
+progs/mptcp_bpf.h:progs/bpf_qdisc_fq.c37:37: error: declaration of 'struct mptcp_subflow_context' will not be visible outside of this function [-Werror,-Wvisibility]
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                     ^
+:282:11: error: call to undeclared function 'bpf_skb_get_hash'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  282 |                         hash = bpf_skb_get_hash(skb) & q.orphan_mask;
+      |                                ^
+progs/bpf_qdisc_dynptr_use_after_invalidate_clone.c:26:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+progs/mptcp_bpf.h:39:16:progs/bpf_qdisc_dynptr_use_after_invalidate_clone.c error: incomplete definition of type 'const struct mptcp_subflow_context'
+   39 |         return subflow->tcp_sock;
+      |                ~~~~~~~^
+progs/mptcp_bpf.h:34:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   34 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+:37:37: note: forward declaration of 'struct mptcp_subflow_context'
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                     ^
+progs/mptcp_subflow.c:41:13: error: no member named 'token' in 'struct mptcp_sock'
+   41 |         key = msk->token;
+      |               ~~~  ^
+progs/mptcp_subflow.c:68:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:30: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:14: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'typeof (*subflow)' (aka 'struct mptcp_subflow_context')
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:13: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:2: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^                           ~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^                   ~~~~~~~~~
+progs/mptcp_bpf.h:29:8: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ^                  ~~~
+progs/mptcp_bpf.h:24:19: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                       ~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:29:32: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+progs/mptcp_bpf.h:24:30: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                                     ^~~~
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:18: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'typeof (*(subflow))' (aka 'struct mptcp_subflow_context')
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:2: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:71:32: error: incompatible pointer types passing 'typeof(struct mptcp_subflow_context) *' (aka 'struct mptcp_subflow_context *') to parameter of type 'const struct mptcp_subflow_context *' [-Werror,-Wincompatible-pointer-types]
+   71 |                 ssk = mptcp_subflow_tcp_sock(bpf_core_cast(subflow,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~
+   72 |                                                            struct mptcp_subflow_context));
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_core_read.h:338:2: note: expanded from macro 'bpf_core_cast'
+  338 |         ((typeof(type) *)bpf_rdonly_cast((ptr), bpf_core_type_id_kernel(type)))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:37:60: note: passing argument to parameter 'subflow' here
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                                            ^
+progs/mptcp_subflow.c:87:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:30: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:14: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'typeof (*subflow)' (aka 'struct mptcp_subflow_context')
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:13: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:2: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^                           ~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^                   ~~~~~~~~~
+progs/mptcp_bpf.h:29:8: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ^                  ~~~
+progs/mptcp_bpf.h:24:19: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                       ~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:29:32: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+progs/mptcp_bpf.h:24:30: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                                     ^~~~
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:18: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'typeof (*(subflow))' (aka 'struct mptcp_subflow_context')
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:2: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:91:32: error: incompatible pointer types passing 'typeof(struct mptcp_subflow_context) *' (aka 'struct mptcp_subflow_context *') to parameter of type 'const struct mptcp_subflow_context *' [-Werror,-Wincompatible-pointer-types]
+   91 |                 ssk = mptcp_subflow_tcp_sock(bpf_core_cast(subflow,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~
+   92 |                                                            struct mptcp_subflow_context));
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_core_read.h:338:2: note: expanded from macro 'bpf_core_cast'
+  338 |         ((typeof(type) *)bpf_rdonly_cast((ptr), bpf_core_type_id_kernel(type)))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:37:60: note: passing argument to parameter 'subflow' here
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                                            ^
+progs/mptcp_subflow.c:120:11: error: no member named 'pm' in 'struct mptcp_sock'
+  120 |         if (msk->pm.extra_subflows != 1) {
+      |             ~~~  ^
+18 errors generated.
+progs/bpf_qdisc_fq.c:370:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  370 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+progs/cgroup_iter_memcg.c:23:10: error: call to undeclared function 'bpf_get_mem_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   23 |         memcg = bpf_get_mem_cprogs/bpf_qdisc_fail__invalid_dynptr_slice.c:24:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+g   24 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+roup(cprogs/bpf_qdisc_fail__invalid_dynptr_slice.c:28:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   28 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+ss);
+      |                 ^
+progs/cgroup_iter_memcg.c:23:10: note: did you mean 'bpf_get_kmem_cache'?
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:174356:27: note: 'bpf_get_kmem_cache' declared here
+ 174356 | extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __weak __ksym;
+        |                           ^
+progs/cgroup_iter_memcg.c:23:8: error: incompatible integer to pointer conversion assigning to 'struct mem_cgroup *' from 'int' [-Wint-conversion]
+   23 |         memcg = bpf_get_mem_cgroup(css);
+      |               ^ ~~~~~~~~~~~~~~~~~~~~~~~
+  SKIP-BPF     mptcp_subflow.bpf.o
+In file included from progs/profiler3.c:6:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+  CLNG-BPF [test_progs] test_lwt_ip_encap.bpf.o
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enterprogs/lwt_misc.c_kil:l17(:s26t:r uerror: cuse of undeclared identifier 'BPF_LWT_ENCAP_IP't
+ syscall_trace_enter* ctx)
+      |                                                 ^
+   17 |         bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &iph, sizeof(struct iphdr));
+      |                                 ^~~~~~~~~~~~~~~~
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+1 error generated.
+1 error generated.
+progs/bpf_qdisc_fifo.c:38:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+  SKIP-BPF     lwt_misc.bpf.o
+  CLNG-BPF [test_progs] test_sleepable_tracepoints.bpf.o
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr_cross_frame.bpf.o
+  CLNG-BPF [test_progs] test_vmlinux.bpf.o
+1 error generated.
+5 errors generated.
+progs/cgroup_iter_memcg.c:27:2: error: call to undeclared function 'bpf_mem_cgroup_flush_stats'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |         bpf_mem_cgroup_flush_stats(memcg);
+      |         ^
+6 errors generated2 errors generated.
+.
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr.bpf.o
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_dynptr_use_after_invalidate_clone.bpf.o
+In file included from progs/profiler2.c:6:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | in  SKIP-BPF     test_bpf_nf.bpf.o
+t tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_fail__incompl_ops.bpf.o
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pi  SKIP-BPF     bpf_qdisc_dynptr_use_after_invalidate_clone.bpf.o
+d = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_fail__invalid_dynptr.bpf.o
+  SKIP-BPF     mptcp_sock.bpf.o
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_fail__invalid_dynptr_cross_frame.bpf.o
+In file included from progs/profiler1.c:5:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/cgroup_iter_memcg.c:29:31: error: call to undeclared function 'bpf_mem_cgroup_page_state'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   29 |         memcg_query.nr_anon_mapped = bpf_mem_cgroup_page_state(
+      |                                      ^
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_fail__invalid_dynptr_slice.bpf.o
+2 errors generated.
+progs/bpf_qdisc_fail__incompl_ops.c:13:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   13 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr_slice.bpf.o
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_fifo.bpf.o
+progs/cgroup_iter_memcg.c:39:24: error: call to undeclared function 'bpf_mem_cgroup_vm_events'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   39 |         memcg_query.pgfault = bpf_mem_cgroup_vm_events(
+      |                               ^
+progs/bpf_qdisc_fq.c:609:3: error: call to undeclared function 'bpf_qdisc_bstats_update'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  609 |                 bpf_qdisc_bstats_update(sch, skb);
+      |                 ^
+3 errors generated.
+progs/bpf_qdisc_fifo.c:71:2: error: call to undeclared function 'bpf_qdisc_bstats_update'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   71 |         bpf_qdisc_bstats_update(sch, skb);
+      |         ^
+progs/cgroup_iter_memcg.c:42:2: error: call to undeclared function 'bpf_put_mem_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   42 |         bpf_put_mem_cgroup(memcg);
+      |         ^
+  SKIP-BPF     profiler3.bpf.o
+  CLNG-BPF [test_progs-no_alu32] bpf_qdisc_fq.bpf.o
+progs/bpf_qdisc_fq.c:614:3: error: call to undeclared function 'bpf_qdisc_watchdog_schedule'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  614 |                 bpf_qdisc_watchdog_schedule(sch, cb_ctx.expire, q.timer_slack);
+      |                 ^
+progs/bpf_qdisc_fifo.c:106:4: error: call to undeclared function 'bpf_kfree_skb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  106 |                         bpf_kfree_skb(skb);
+      |                         ^
+3 errors generated.
+5 errors generated.
+  SKIP-BPF     bpf_qdisc_fifo.bpf.o
+  SKIP-BPF     bpf_qdisc_fq.bpf.o
+  CLNG-BPF [test_progs-no_alu32] cgroup_iter_memcg.bpf.o
+  CLNG-BPF [test_progs-no_alu32] lwt_misc.bpf.o
+3 errors generated.
+  SKIP-BPF     profiler2.bpf.o
+1 error generated.
+3 errors generated.
+  CLNG-BPF [test_progs-no_alu32] mptcp_sock.bpf.o
+  SKIP-BPF     bpf_qdisc_fail__incompl_ops.bpf.o
+  CLNG-BPF [test_progs-no_alu32] mptcp_subflow.bpf.o
+  SKIP-BPF     profiler1.bpf.o
+  CLNG-BPF [test_progs-no_alu32] profiler1.bpf.o
+6 errors generated.
+  SKIP-BPF     cgroup_iter_memcg.bpf.o
+  CLNG-BPF [test_progs-no_alu32] profiler2.bpf.o
+progs/test_sleepable_tracepoints.c:48:32: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   48 | int handle_sys_enter_tp(struct syscall_trace_enter *args)
+      |                                ^
+progs/test_sleepable_tracepoints.c:53:37: error: incomplete definition of type 'struct syscall_trace_enter'
+   53 |         return copy_getcwd_arg((void *)args->args[0]);
+      |                                        ~~~~^
+progs/test_sleepable_tracepoints.c:48:32: note: forward declaration of 'struct syscall_trace_enter'
+   48 | int handle_sys_enter_tp(struct syscall_trace_enter *args)
+      |                                ^
+progs/test_sleepable_tracepoints.c:57:31: error: declaration of 'struct syscall_trace_exit' will not be visible outside of this function [-Werror,-Wvisibility]
+   57 | int handle_sys_exit_tp(struct syscall_trace_exit *args)
+      |                               ^
+progs/test_sleepable_tracepoints.c:81:38: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   81 | int handle_sys_enter_tp_alias(struct syscall_trace_enter *args)
+      |                                      ^
+progs/bpf_qdisc_dynptr_use_after_invalidate_clone.c:26:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+progs/bpf_qdisc_dynptr_use_after_invalidate_clone.c:34:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   34 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+progs/test_vmlinux.c:19:23: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+progs/test_lwt_ip_encap.c:41:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   41 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr,
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_vmlinux.c:24:10: error: incomplete definition of type 'struct syscall_trace_enter'
+   24 |         if (args->nr != __NR_nanosleep)
+      |             ~~~~^
+progs/test_vmlinux.c:19:23: note: forward declaration of 'struct syscall_trace_enter'
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+progs/test_vmlinux.c:27:19: error: incomplete definition of type 'struct syscall_trace_enter'
+   27 |         ts = (void *)args->args[0];
+      |                      ~~~~^
+progs/test_vmlinux.c:19:23: note: forward declaration of 'struct syscall_trace_enter'
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+3 errors generated.
+progs/bpf_qdisc_fail__invalid_dynptr.c:22:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   22 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+  SKIP-BPF     test_vmlinux.bpf.o
+  CLNG-BPF [test_progs-no_alu32] profiler3.bpf.o
+progs/test_lwt_ip_encap.c:75:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   75 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr,
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_lwt_ip_encap.c:105:19: error: field has incomplete type 'struct vxlanhdr'
+  105 |                 struct vxlanhdr vxh;
+      |                                 ^
+progs/test_lwt_ip_encap.c:105:10: note: forward declaration of 'struct vxlanhdr'
+  105 |                 struct vxlanhdr vxh;
+      |                        ^
+progs/test_lwt_ip_encap.c:139:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+  139 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr, sizeof(hdr));
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_lwt_ip_encap.c:152:19: error: field has incomplete type 'struct vxlanhdr'
+  152 |                 struct vxlanhdr vxh;
+      |                                 ^
+progs/test_lwt_ip_encap.c:152:10: note: forward declaration of 'struct vxlanhdr'
+  152 |                 struct vxlanhdr vxh;
+      |                        ^
+progs/bpf_qdisc_fail__invalid_dynptr_slice.c:24:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   24 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+progs/bpf_qdisc_fail__invalid_dynptr_slice.c:28:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   28 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+progs/bpf_qdisc_fail__invalid_dynptr_cross_frame.c:14:2: error: call to undeclared function 'bpf_kfree_skb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |         bpf_kfree_skb(skb);
+      |         ^
+4 errors generated.
+2 errors generated.
+  SKIP-BPF     test_sleepable_tracepoints.bpf.o
+progs/test_lwt_ip_encap.c:185:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+  185 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr, sizeof(hdr));
+      |                                       ^~~~~~~~~~~~~~~~
+  CLNG-BPF [test_progs-no_alu32] test_bpf_nf.bpf.o
+  SKIP-BPF     bpf_qdisc_dynptr_use_after_invalidate_clone.bpf.o
+  CLNG-BPF [test_progs-no_alu32] test_init_inode_xattr.bpf.o
+1 error generated.
+progs/bpf_qdisc_fail__incompl_ops.c:13:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   13 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr.bpf.o
+  CLNG-BPF [test_progs-no_alu32] test_lwt_ip_encap.bpf.o
+2 errors generated.
+progs/bpf_qdisc_fq.c:275:11: error: call to undeclared function 'bpf_skb_get_hash'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  275 |                         hash = bpf_skb_get_hash(skb) & q.orphan_mask;
+      |                                ^
+progs/bpf_qdisc_fq.c:282:11: error: call to undeclared function 'bpf_skb_get_hash'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  282 |                         hash = bpf_skb_get_hash(skb) & q.orphan_mask;
+      |                                ^
+progs/cgroup_iter_memcg.c:23:10: error: call to undeclared function 'bpf_get_mem_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   23 |         memcg = bpf_get_mem_cgroup(css);
+      |                 ^
+progs/cgroup_iter_memcg.c:23:10: note: did you mean 'bpf_get_kmem_cache'?
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:174356:27: note: 'bpf_get_kmem_cache' declared here
+ 174356 | extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __weak __ksym;
+        |                           ^
+progs/cgroup_iter_memcg.c:23:8: error: incompatible integer to pointer conversion assigning to 'struct mem_cgroup *' from 'int' [-Wint-conversion]
+   23 |         memcg = bpf_get_mem_cgroup(css);
+      |               ^ ~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+progs/bpf_qdisc_fifo.c:38:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr_slice.bpf.o
+  CLNG-BPF [test_progs-no_alu32] test_sleepable_tracepoints.bpf.o
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr_cross_frame.bpf.o
+progs/lwt_misc.c:17:26: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   17 |         bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &iph, sizeof(struct iphdr));
+      |                                 ^~~~~~~~~~~~~~~~
+1 error generated.
+  CLNG-BPF [test_progs-no_alu32] test_vmlinux.bpf.o
+progs/bpf_qdisc_fq.c:370:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  370 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+6 errors generated.
+  SKIP-BPF     lwt_misc.bpf.o
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_dynptr_use_after_invalidate_clone.bpf.o
+progs/cgroup_iter_memcg.c:27:2: error: call to undeclared function 'bpf_mem_cgroup_flush_stats'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |         bpf_mem_cgroup_flush_stats(memcg);
+      |         ^
+In file included from progs/mptcp_subflow.c:7:
+progs/mptcp_bpf.h:37:37: error: declaration of 'struct mptcp_subflow_context' will not be visible outside of this function [-Werror,-Wvisibility]
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                     ^
+progs/mptcp_bpf.h:39:16: error: incomplete definition of type 'const struct mptcp_subflow_context'
+   39 |         return subflow->tcp_sock;
+      |                ~~~~~~~^
+progs/mptcp_bpf.h:37:37: note: forward declaration of 'struct mptcp_subflow_context'
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                     ^
+progs/mptcp_subflow.c:41:13: error: no member named 'token' in 'struct mptcp_sock'
+   41 |         key = msk->token;
+      |               ~~~  ^
+progs/mptcp_subflow.c:68:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:30: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:14: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'typeof (*subflow)' (aka 'struct mptcp_subflow_context')
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:13: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:2: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^                           ~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^                   ~~~~~~~~~
+progs/mptcp_bpf.h:29:8: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ^                  ~~~
+progs/mptcp_bpf.h:24:19: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                       ~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:29:32: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+progs/mptcp_bpf.h:24:30: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                                     ^~~~
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:18: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'typeof (*(subflow))' (aka 'struct mptcp_subflow_context')
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:2: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:71:32: error: incompatible pointer types passing 'typeof(struct mptcp_subflow_context) *' (aka 'struct mptcp_subflow_context *') to parameter of type 'const struct mptcp_subflow_context *' [-Werror,-Wincompatible-pointer-types]
+   71 |                 ssk = mptcp_subflow_tcp_sock(bpf_core_cast(subflow,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~
+   72 |                                                            struct mptcp_subflow_context));
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_core_read.h:338:2: note: expanded from macro 'bpf_core_cast'
+  338 |         ((typeof(type) *)bpf_rdonly_cast((ptr), bpf_core_type_id_kernel(type)))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:37:60: note: passing argument to parameter 'subflow' here
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                                            ^
+progs/mptcp_subflow.c:87:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:30: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:14: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'typeof (*subflow)' (aka 'struct mptcp_subflow_context')
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:13: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:2: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^                           ~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^                   ~~~~~~~~~
+progs/mptcp_bpf.h:29:8: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ^                  ~~~
+progs/mptcp_bpf.h:24:19: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                       ~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h  SKIP-BPF     test_lwt_ip_encap.bpf.o
+:29:32: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+progs/mptcp_bpf.h:24:30: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                                     ^~~~
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:18: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'typeof (*(subflow))' (aka 'struct mptcp_subflow_context')
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:2: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:91:32: error: incompatible pointer types passing 'typeof(struct mptcp_subflow_context) *' (aka 'struct mptcp_subflow_context *') to parameter of type 'const struct mptcp_subflow_context *' [-Werror,-Wincompatible-pointer-types]
+   91 |                 ssk = mptcp_subflow_tcp_sock(bpf_core_cast(subflow,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~
+   92 |                                                            struct mptcp_subflow_context));
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_core_read.h:338:2: note: expanded from macro 'bpf_core_cast'
+  338 |         ((typeof(type) *)bpf_rdonly_cast((ptr), bpf_core_type_id_kernel(type)))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:37:60: note: passing argument to parameter 'subflow' here
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                                            ^
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_fail__incompl_ops.bpf.o
+progs/mptcp_subflow.c:120:11: error: no member named 'pm' in 'struct mptcp_sock'
+  120 |         if (msk->pm.extra_subflows != 1) {
+      |             ~~~  ^
+1 error generated.
+18 errors generated.
+progs/cgroup_iter_memcg.c:29:31: error: call to undeclared function 'bpf_mem_cgroup_page_state'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   29 |         memcg_query.nr_anon_mapped = bpf_mem_cgroup_page_state(
+      |                                      ^
+  SKIP-BPF     mptcp_subflow.bpf.o
+  SKIP-BPF     bpf_qdisc_fail__incompl_ops.bpf.o
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_fail__invalid_dynptr.bpf.o
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_fail__invalid_dynptr_cross_frame.bpf.o
+In file included from progs/profiler1.c:5:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
+      |                                          ~~~  ^
+progs/mptcp_sock.c:49:57: error: no member named 'is_mptcp' in 'struct tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
+      |                                                           ~~~  ^
+progs/mptcp_sock.c:69:25: error: no member named 'token' in 'struct mptcp_sock'
+   69 |                 storage->token = msk->token;
+      |                                  ~~~  ^
+progs/mptcp_sock.c:70:43: error: no member named 'ca_name' in 'struct mptcp_sock'
+   70 |                 __builtin_memcpy(storage->ca_name, msk->ca_name, TCP_CA_NAME_MAX);
+      |                                                    ~~~  ^
+progs/mptcp_sock.c:71:25: error: no member named 'first' in 'struct mptcp_sock'
+   71 |                 storage->first = msk->first;
+      |                                  ~~~  ^
+progs/mptcp_sock.c:85:16: error: no member named 'token' in 'struct mptcp_sock'
+   85 |                 token = msk->token;
+      |                         ~~~  ^
+progs/cgroup_iter_memcg.c:39:24: error: call to undeclared function 'bpf_mem_cgroup_vm_events'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   39 |         memcg_query.pgfault = bpf_mem_cgroup_vm_events(
+      |                               ^
+In file included from progs/profiler2.c:6:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/bpf_qdisc_fifo.c:71:2: error: call to undeclared function 'bpf_qdisc_bstats_update'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   71 |         bpf_qdisc_bstats_update(sch, skb);
+      |         ^
+progs/cgroup_iter_memcg.c:42:2: error: call to undeclared function 'bpf_put_mem_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   42 |         bpf_put_mem_cgroup(memcg);
+      |         ^
+progs/bpf_qdisc_fifo.c:106:4: error: call to undeclared function 'bpf_kfree_skb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  106 |                         bpf_kfree_skb(skb);
+      |                         ^
+3 errors generated.
+progs/bpf_qdisc_fq.c:609:3: error: call to undeclared function 'bpf_qdisc_bstats_update'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  609 |                 bpf_qdisc_bstats_update(sch, skb);
+      |                 ^
+  SKIP-BPF     bpf_qdisc_fifo.bpf.o
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_fail__invalid_dynptr_slice.bpf.o
+progs/bpf_qdisc_fq.c:614:3: error: call to undeclared function 'bpf_qdisc_watchdog_schedule'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  614 |                 bpf_qdisc_watchdog_schedule(sch, cb_ctx.expire, q.timer_slack);
+      |                 ^
+6 errors generated.
+5 errors generated.
+  SKIP-BPF     mptcp_sock.bpf.o
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_fifo.bpf.o
+3 errors generated.
+  SKIP-BPF     bpf_qdisc_fq.bpf.o
+  CLNG-BPF [test_progs-cpuv4] bpf_qdisc_fq.bpf.o
+6 errors generated.
+  SKIP-BPF     profiler1.bpf.o
+  CLNG-BPF [test_progs-cpuv4] cgroup_iter_memcg.bpf.o
+  SKIP-BPF     cgroup_iter_memcg.bpf.o
+  CLNG-BPF [test_progs-cpuv4] lwt_misc.bpf.o
+3 errors generated.
+  SKIP-BPF     profiler2.bpf.o
+  CLNG-BPF [test_progs-cpuv4] mptcp_sock.bpf.o
+In file included from progs/profiler3.c:6:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/test_lwt_ip_encap.c:41:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   41 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr,
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_bpf_nf.c:200:7: error: no member named 'mark' in 'struct nf_conn'
+  200 |                 ct->mark = 77;
+      |                 ~~  ^
+progs/test_bpf_nf.c:231:38: error: no member named 'mark' in 'struct nf_conn'
+  231 |                                 test_insert_lookup_mark = ct_lk->mark;
+      |                                                           ~~~~~  ^
+progs/test_bpf_nf.c:253:11: error: no member named 'mark' in 'struct nf_conn'
+  253 |                 if (ct->mark == 42) {
+      |                     ~~  ^
+progs/test_bpf_nf.c:254:8: error: no member named 'mark' in 'struct nf_conn'
+  254 |                         ct->mark++;
+      |                         ~~  ^
+progs/test_bpf_nf.c:255:33: error: no member named 'mark' in 'struct nf_conn'
+  255 |                         test_exist_lookup_mark = ct->mark;
+      |                                                  ~~  ^
+progs/test_lwt_ip_encap.c:75:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   75 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr,
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_lwt_ip_encap.c:105:19: error: field has incomplete type 'struct vxlanhdr'
+  105 |                 struct vxlanhdr vxh;
+      |                                 ^
+progs/test_lwt_ip_encap.c:105:10: note: forward declaration of 'struct vxlanhdr'
+  105 |                 struct vxlanhdr vxh;
+      |                        ^
+progs/test_lwt_ip_encap.c:139:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+  139 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr, sizeof(hdr));
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_lwt_ip_encap.c:152:19: error: field has incomplete type 'struct vxlanhdr'
+  152 |                 struct vxlanhdr vxh;
+      |                                 ^
+progs/test_lwt_ip_encap.c:152:10: note: forward declaration of 'struct vxlanhdr'
+  152 |                 struct vxlanhdr vxh;
+      |                        ^
+progs/test_lwt_ip_encap.c:185:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+  185 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr, sizeof(hdr));
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_sleepable_tracepoints.c:48:32: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   48 | int handle_sys_enter_tp(struct syscall_trace_enter *args)
+      |                                ^
+progs/test_sleepable_tracepoints.c:53:37: error: incomplete definition of type 'struct syscall_trace_enter'
+   53 |         return copy_getcwd_arg((void *)args->args[0]);
+      |                                        ~~~~^
+progs/test_sleepable_tracepoints.c:48:32: note: forward declaration of 'struct syscall_trace_enter'
+   48 | int handle_sysprogs/test_vmlinux.c:19:23: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+_   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+enter_tp(struct syscall_trace_enter *args)
+      |                                ^
+progs/test_sleepable_tracepoints.c:57:31: error: declaration of 'struct syscall_trace_exit' will not be visible outside of this function [-Werror,-Wvisibility]
+   57 | int handle_sys_exit_tp(struct syscall_trace_exit *args)
+      |                               ^
+progs/test_vmlinux.c:24:10: error: incomplete definition of type 'struct syscall_trace_enter'
+   24 |         if (args->nr != __NR_nanosleep)
+      |             ~~~~^
+progs/test_vmlinux.c:19:23: note: forward declaration of 'struct syscall_trace_enter'
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+progs/test_vmlinux.c:27:19progs/test_sleepable_tracepoints.c:81:38: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   81 | int handle_sys_enter_tp_alias(struct syscall_trace_enter *args)
+      |                                      ^
+: error: incomplete definition of type 'struct syscall_trace_enter'
+   27 |         ts = (void *)args->args[0];
+      |                      ~~~~^
+progs/test_vmlinux.c:19:23: note: forward declaration of 'struct syscall_trace_enter'
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+5 errors generated.
+3 errors generated.
+progs/bpf_qdisc_dynptr_use_after_invalidate_clone.c:26:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+progs/bpf_qdisc_dynptr_use_after_invalidate_clone.c:34:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   34 |         bpf_qdisc_skb_drop(skb3 errors generated.
+, to_free);
+      |         ^
+  SKIP-BPF     profiler3.bpf.o
+  SKIP-BPF     test_bpf_nf.bpf.o
+  SKIP-BPF     test_vmlinux.bpf.o
+  CLNG-BPF [test_progs-cpuv4] mptcp_subflow.bpf.o
+  CLNG-BPF [test_progs-cpuv4] profiler1.bpf.o
+  CLNG-BPF [test_progs-cpuv4] profiler2.bpf.o
+progs/bpf_qdisc_fail__incompl_ops.c:13:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   13 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+progs/bpf_qdisc_fail__invalid_dynptr_cross_frame.c:14:2: error: call to undeclared function 'bpf_kfree_skb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |         bpf_kfree_skb(skb);
+      |         ^
+progs/bpf_qdisc_fail__invalid_dynptr.c:22:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   22 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+6 errors generated.
+4 errors generated.
+  SKIP-BPF     test_lwt_ip_encap.bpf.o
+  CLNG-BPF [test_progs-cpuv4] profiler3.bpf.o
+2 errors generated.
+  SKIP-BPF     test_sleepable_tracepoints.bpf.o
+  CLNG-BPF [test_progs-cpuv4] test_bpf_nf.bpf.o
+  SKIP-BPF     bpf_qdisc_dynptr_use_after_invalidate_clone.bpf.o
+  CLNG-BPF [test_progs-cpuv4] test_init_inode_xattr.bpf.o
+  CLNG-BPF [test_progs-cpuv4] test_lwt_ip_encap.bpf.o
+1 error generated.
+  SKIP-BPF     bpf_qdisc_fail__incompl_ops.bpf.o
+  CLNG-BPF [test_progs-cpuv4] test_sleepable_tracepoints.bpf.o
+progs/bpf_qdisc_fail__invalid_dynptr_slice.c:24:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   24 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+progs/bpf_qdisc_fail__invalid_dynptr_slice.c:28:2: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   28 |         bpf_qdisc_skb_drop(skb, to_free);
+      |         ^
+1 error generated.
+1 error generated.
+progs/lwt_misc.c:17:26: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   17 |         bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &iph, sizeof(struct iphdr));
+      |                                 ^~~~~~~~~~~~~~~~
+1 error generated.
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr.bpf.o
+  CLNG-BPF [test_progs-cpuv4] test_vmlinux.bpf.o
+  SKIP-BPF     lwt_misc.bpf.o
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr_cross_frame.bpf.o
+  SKIP-SKEL    bpf_qdisc_dynptr_use_after_invalidate_clone.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__incompl_ops.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr_cross_frame.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr_slice.skel.h
+progs/cgroup_iter_memcg.c:23:10: error: call to undeclared function 'bpf_get_mem_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   23 |         memcg = bpf_get_mem_cgroup(css);
+      |                 ^
+progs/cgroup_iter_memcg.c:23:10: note: did you mean 'bpf_get_kmem_cache'?
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:174356:27: note: 'bpf_get_kmem_cache' declared here
+ 174356 | extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __weak __ksym;
+        |                           ^
+progs/cgroup_iter_memcg.c:23:8: error: incompatible integer to pointer conversion assigning to 'struct mem_cgroup *' from 'int' [-Wint-conversion]
+   23 |         memcg = bpf_get_mem_cgroup(css);
+      |               ^ ~~~~~~~~~~~~~~~~~~~~~~~
+progs/bpf_qdisc_fifo.c:38:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]  SKIP-SKEL    bpf_qdisc_fq.skel.h
+
+   38 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+  SKIP-SKEL    bpf_qdisc_fifo.skel.h
+  SKIP-SKEL    cgroup_iter_memcg.skel.h
+  SKIP-SKEL    lwt_misc.skel.h
+  SKIP-SKEL    mptcp_sock.skel.h
+  SKIP-SKEL    mptcp_subflow.skel.h
+  SKIP-SKEL    profiler1.skel.h
+  SKIP-SKEL    profiler2.skel.h
+  SKIP-SKEL    profiler3.skel.h
+  SKIP-SKEL    test_bpf_nf.skel.h
+  GEN-SKEL     [test_progs] test_init_inode_xattr.skel.h
+  SKIP-SKEL    test_lwt_ip_encap.skel.h
+  SKIP-SKEL    test_sleepable_tracepoints.skel.h
+  SKIP-SKEL    test_vmlinux.skel.h
+progs/cgroup_iter_memcg.c:27:2: error: call to undeclared function 'bpf_mem_cgroup_flush_stats'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   27 |         bpf_mem_cgroup_flush_stats(memcg);
+      |         ^
+progs/bpf_qdisc_fq.c:275:11: error: call to undeclared function 'bpf_skb_get_hash'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  275 |                         hash = bpf_skb_get_hash(skb) & q.orphan_mask;
+      |                                ^
+progs/bpf_qdisc_fq.c:282:11: error: call to undeclared function 'bpf_skb_get_hash'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  282 |                         hash = bpf_skb_get_hash(skb) & q.orphan_mask;
+      |                                ^
+  SKIP-SKEL    bpf_qdisc_dynptr_use_after_invalidate_clone.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__incompl_ops.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr_cross_frame.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr_slice.skel.h
+  SKIP-SKEL    bpf_qdisc_fifo.skel.h
+  SKIP-SKEL    bpf_qdisc_fq.skel.h
+  SKIP-SKEL    cgroup_iter_memcg.skel.h
+progs/cgroup_iter_memcg.c:29:31: error: call to undeclared function 'bpf_mem_cgroup_page_state'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   29 |         memcg_query.nr_anon_mapped = bpf_mem_cgroup_page_state(
+      |                                      ^
+progs/bpf_qdisc_fq.c:370:3: error: call to undeclared function 'bpf_qdisc_skb_drop'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  370 |                 bpf_qdisc_skb_drop(skb, to_free);
+      |                 ^
+  SKIP-SKEL    lwt_misc.skel.h
+  SKIP-SKEL    mptcp_sock.skel.h
+  SKIP-SKEL    mptcp_subflow.skel.h
+  SKIP-SKEL    profiler1.skel.h
+2 errors generated.
+  SKIP-SKEL    profiler2.skel.h
+  SKIP-SKEL    profiler3.skel.h
+progs/mptcp_sock.c:49:40: error: no member named 'is_mptcp' in 'struct tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
+      |                                          ~~~  ^
+progs/mptcp_sock.c:49:57: error: no member named 'is_mptcp' in 'struct tcp_sock'
+   49 |         is_mptcp = bpf_core_field_exists(tsk->is_mptcp) ? tsk->is_mptcp : 0;
+      |                                                           ~~~  ^
+progs/mptcp_sock.c:69:25: error: no member named 'token' in 'struct mptcp_sock'
+   69 |                 storage->token = msk->token;
+      |                                  ~~~  ^
+progs/mptcp_sock.c:70:43: error: no member named 'ca_name' in 'struct mptcp_sock'
+   70 |                 __builtin_memcpy(storage->ca_name, msk->ca_name, TCP_CA_NAME_MAX);
+      |                                                    ~~~  ^
+progs/mptcp_sock.c:71:25: error: no member named 'first' in 'struct mptcp_sock'
+   71 |                 storage->first = msk->first;
+      |                                  ~~~  ^
+progs/mptcp_sock.c:85:16: error: no member named 'token' in 'struct mptcp_sock'
+   85 |                 token = msk->token;
+      |                         ~~~  ^
+  SKIP-SKEL    test_bpf_nf.skel.h
+  GEN-SKEL     [test_progs-no_alu32] test_init_inode_xattr.skel.h
+  SKIP-BPF     bpf_qdisc_fail__invalid_dynptr_slice.bpf.o
+progs/cgroup_iter_memcg.c:39:24: error: call to undeclared function 'bpf_mem_cgroup_vm_events'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   39 |         memcg_query.pgfault = bpf_mem_cgroup_vm_events(
+      |                               ^
+  SKIP-SKEL    test_lwt_ip_encap.skel.h
+  SKIP-SKEL    test_sleepable_tracepoints.skel.h
+  SKIP-SKEL    test_vmlinux.skel.h
+progs/bpf_qdisc_fifo.c:71:2: error: call to undeclared function 'bpf_qdisc_bstats_update'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   71 |         bpf_qdisc_bstats_update(sch, skb);
+      |         ^
+  SKIP-SKEL    bpf_qdisc_fail__incompl_ops.skel.h
+progs/cgroup_iter_memcg.c:42:2: error: call to undeclared function 'bpf_put_mem_cgroup'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   42 |         bpf_put_mem_cgroup(memcg);
+      |         ^
+  SKIP-SKEL    bpf_qdisc_dynptr_use_after_invalidate_clone.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr_cross_frame.skel.h
+  SKIP-SKEL    bpf_qdisc_fail__invalid_dynptr_slice.skel.h
+  SKIP-SKEL    lwt_misc.skel.h
+progs/bpf_qdisc_fifo.c:106:4: error: call to undeclared function 'bpf_kfree_skb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  106 |                         bpf_kfree_skb(skb);
+      |                         ^
+3 errors generated.
+  SKIP-BPF     bpf_qdisc_fifo.bpf.o
+6 errors generated.
+  SKIP-BPF     mptcp_sock.bpf.o
+  SKIP-SKEL    bpf_qdisc_fifo.skel.h
+  SKIP-SKEL    mptcp_sock.skel.h
+progs/bpf_qdisc_fq.c:609:3: error: call to undeclared function 'bpf_qdisc_bstats_update'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  609 |                 bpf_qdisc_bstats_update(sch, skb);
+      |                 ^
+progs/bpf_qdisc_fq.c:614:3: error: call to undeclared function 'bpf_qdisc_watchdog_schedule'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  614 |                 bpf_qdisc_watchdog_schedule(sch, cb_ctx.expire, q.timer_slack);
+      |                 ^
+6 errors generated.
+  SKIP-BPF     cgroup_iter_memcg.bpf.o
+5 errors generated.
+  SKIP-SKEL    cgroup_iter_memcg.skel.h
+  SKIP-BPF     bpf_qdisc_fq.bpf.o
+  SKIP-SKEL    bpf_qdisc_fq.skel.h
+In file included from progs/mptcp_subflow.c:7:
+progs/mptcp_bpf.h:37:37: error: declaration of 'struct mptcp_subflow_context' will not be visible outside of this function [-Werror,-Wvisibility]
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                     ^
+progs/mptcp_bpf.h:39:16: error: incomplete definition of type 'const struct mptcp_subflow_context'
+   39 |         return subflow->tcp_sock;
+      |                ~~~~~~~^
+progs/mptcp_bpf.h:37:37: note: forward declaration of 'struct mptcp_subflow_context'
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                     ^
+progs/mptcp_subflow.c:41:13: error: no member named 'token' in 'struct mptcp_sock'
+   41 |         key = msk->token;
+      |               ~~~  ^
+progs/mptcp_subflow.c:68:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:30: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:14: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'typeof (*subflow)' (aka 'struct mptcp_subflow_context')
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:13: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:2: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^                           ~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^                   ~~~~~~~~~
+progs/mptcp_bpf.h:29:8: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ^                  ~~~
+progs/mptcp_bpf.h:24:19: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                       ~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:29:32: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+progs/mptcp_bpf.h:24:30: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                                     ^~~~
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:18: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:68:2: error: incomplete definition of type 'typeof (*(subflow))' (aka 'struct mptcp_subflow_context')
+   68 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:2: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:65:9: note: forward declaration of 'struct mptcp_subflow_context'
+   65 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:71:32: error: incompatible pointer types passing 'typeof(struct mptcp_subflow_context) *' (aka 'struct mptcp_subflow_context *') to parameter of type 'const struct mptcp_subflow_context *' [-Werror,-Wincompatible-pointer-types]
+   71 |                 ssk = mptcp_subflow_tcp_sock(bpf_core_cast(subflow,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~
+   72 |                                                            struct mptcp_subflow_context));
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_core_read.h:338:2: note: expanded from macro 'bpf_core_cast'
+  338 |         ((typeof(type) *)bpf_rdonly_cast((ptr), bpf_core_type_id_kernel(type)))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:37:60: note: passing argument to parameter 'subflow' here
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                                            ^
+progs/mptcp_subflow.c:87:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:30: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:14: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'typeof (*subflow)' (aka 'struct mptcp_subflow_context')
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:28:13: note: expanded from macro 'list_for_each_entry'
+   28 |         for (pos = list_first_entry(head, typeof(*pos), member);        \
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:18:2: note: expanded from macro 'list_first_entry'
+   18 |         list_entry((ptr)->next, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^                           ~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^                   ~~~~~~~~~
+progs/mptcp_bpf.h:29:8: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ^                  ~~~
+progs/mptcp_bpf.h:24:19: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                       ~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: no member named 'conn_list' in 'struct mptcp_sock'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:44: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:29:32: note: expanded from macro 'list_for_each_entry'
+   29 |              !list_entry_is_head(pos, head, member) && can_loop;        \
+      |               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+progs/mptcp_bpf.h:24:30: note: expanded from macro 'list_entry_is_head'
+   24 |         list_is_head(&pos->member, (head))
+      |                                     ^~~~
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'struct mptcp_subflow_context'
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:18: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:15: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:101:27: note: expanded from macro 'container_of'
+  101 |                 void *__mptr = (void *)(ptr);                   \
+      |                                         ^~~
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:87:2: error: incomplete definition of type 'typeof (*(subflow))' (aka 'struct mptcp_subflow_context')
+   87 |         mptcp_for_each_subflow(msk, subflow) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:34:2: note: expanded from macro 'mptcp_for_each_subflow'
+   34 |         list_for_each_entry(__subflow, &((__msk)->conn_list), node)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:30:13: note: expanded from macro 'list_for_each_entry'
+   30 |              pos = list_next_entry(pos, member))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:21:2: note: expanded from macro 'list_next_entry'
+   21 |         list_entry((pos)->member.next, typeof(*(pos)), member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:15:2: note: expanded from macro 'list_entry'
+   15 |         container_of(ptr, type, member)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:102:22: note: expanded from macro 'container_of'
+  102 |                 ((type *)(__mptr - offsetof(type, member)));    \
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:95:60: note: expanded from macro 'offsetof'
+   95 | #define offsetof(type, member)  ((unsigned long)&((type *)0)->member)
+      |                                                  ~~~~~~~~~~~^
+progs/mptcp_subflow.c:85:9: note: forward declaration of 'struct mptcp_subflow_context'
+   85 |         struct mptcp_subflow_context *subflow;
+      |                ^
+progs/mptcp_subflow.c:91:32: error: incompatible pointer types passing 'typeof(struct mptcp_subflow_context) *' (aka 'struct mptcp_subflow_context *') to parameter of type 'const struct mptcp_subflow_context *' [-Werror,-Wincompatible-pointer-types]
+   91 |                 ssk = mptcp_subflow_tcp_sock(bpf_core_cast(subflow,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~
+   92 |                                                            struct mptcp_subflow_context));
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_core_read.h:338:2: note: expanded from macro 'bpf_core_cast'
+  338 |         ((typeof(type) *)bpf_rdonly_cast((ptr), bpf_core_type_id_kernel(type)))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+progs/mptcp_bpf.h:37:60: note: passing argument to parameter 'subflow' here
+   37 | mptcp_subflow_tcp_sock(const struct mptcp_subflow_context *subflow)
+      |                                                            ^
+progs/mptcp_subflow.c:120:11: error: no member named 'pm' in 'struct mptcp_sock'
+  120 |         if (msk->pm.extra_subflows != 1) {
+      |             ~~~  ^
+18 errors generated.
+  SKIP-BPF     mptcp_subflow.bpf.o
+  SKIP-SKEL    mptcp_subflow.skel.h
+In file included from progs/profiler1.c:5:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+In file included from progs/profiler2.c:6:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/test_lwt_ip_encap.c:41:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   41 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr,
+      |                                       ^~~~~~~~~~~~~~~~
+In file included from progs/profiler3.c:6:
+progs/profiler.inc.h:599:49: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:604:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  604 |         int pid = ctx->args[0];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+progs/profiler.inc.h:605:15: error: incomplete definition of type 'struct syscall_trace_enter'
+  605 |         int sig = ctx->args[1];
+      |                   ~~~^
+progs/profiler.inc.h:599:49: note: forward declaration of 'struct syscall_trace_enter'
+  599 | int tracepoint__syscalls__sys_enter_kill(struct syscall_trace_enter* ctx)
+      |                                                 ^
+3 errors generated.
+progs/test_lwt_ip_encap.c:75:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+   75 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr,
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_lwt_ip_encap.c:105:19: error: field has incomplete type 'struct vxlanhdr'
+  105 |                 struct vxlanhdr vxh;
+      |                                 ^
+progs/test_lwt_ip_encap.c:105:10: note: forward declaration of 'struct vxlanhdr'
+  105 |                 struct vxlanhdr vxh;
+      |                        ^
+  SKIP-BPF     profiler1.bpf.o
+  SKIP-SKEL    profiler1.skel.h
+progs/test_lwt_ip_encap.c:139:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+  139 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr, sizeof(hdr));
+      |                                       ^~~~~~~~~~~~~~~~
+progs/test_lwt_ip_encap.c:152:19: error: field has incomplete type 'struct vxlanhdr'
+  152 |                 struct vxlanhdr vxh;
+      |                                 ^
+progs/test_lwt_ip_encap.c:152:10: note: forward declaration of 'struct vxlanhdr'
+  152 |                 struct vxlanhdr vxh;
+      |                        ^
+  GEN-SKEL     [test_progs-cpuv4] test_init_inode_xattr.skel.h
+3 errors generated.
+  SKIP-BPF     profiler2.bpf.o
+  SKIP-SKEL    profiler2.skel.h
+progs/test_lwt_ip_encap.c:185:32: error: use of undeclared identifier 'BPF_LWT_ENCAP_IP'
+  185 |         err = bpf_lwt_push_encap(skb, BPF_LWT_ENCAP_IP, &hdr, sizeof(hdr));
+      |                                       ^~~~~~~~~~~~~~~~
+3 errors generated.
+progs/test_vmlinux.c:19:23: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+progs/test_vmlinux.c:24:10: error: incomplete definition of type 'struct syscall_trace_enter'
+   24 |         if (args->nr != __NR_nanosleep)
+      |             ~~~~^
+progs/test_vmlinux.c:19:23: note: forward declaration of 'struct syscall_trace_enter'
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+progs/test_vmlinux.c:27:19: error: incomplete definition of type 'struct syscall_trace_enter'
+   27 |         ts = (void *)args->args[0];
+      |                      ~~~~^
+progs/test_vmlinux.c:19:23: note: forward declaration of 'struct syscall_trace_enter'
+   19 | int handle__tp(struct syscall_trace_enter *args)
+      |                       ^
+  SKIP-BPF     profiler3.bpf.o
+3 errors generated.
+  SKIP-SKEL    profiler3.skel.h
+  SKIP-BPF     test_vmlinux.bpf.o
+  SKIP-SKEL    test_vmlinux.skel.h
+progs/test_bpf_nf.c:200:7: error: no member named 'mark' in 'struct nf_conn'
+  200 |                 ct->mark = 77;
+      |                 ~~  ^
+progs/test_bpf_nf.c:231:38: error: no member named 'mark' in 'struct nf_conn'
+  231 |                                 test_insert_lookup_mark = ct_lk->mark;
+      |                                                           ~~~~~  ^
+progs/test_bpf_nf.c:253:11: error: no member named 'mark' in 'struct nf_conn'
+  253 |                 if (ct->mark == 42) {
+      |                     ~~  ^
+progs/test_bpf_nf.c:254:8: error: no member named 'mark' in 'struct nf_conn'
+  254 |                         ct->mark++;
+      |                         ~~  ^
+progs/test_bpf_nf.c:255:33: error: no member named 'mark' in 'struct nf_conn'
+  255 |                         test_exist_lookup_mark = ct->mark;
+      |                                                  ~~  ^
+progs/test_sleepable_tracepoints.c:48:32: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   48 | int handle_sys_enter_tp(struct syscall_trace_enter *args)
+      |                                ^
+6 errors generated.
+progs/test_sleepable_tracepoints.c:53:37: error: incomplete definition of type 'struct syscall_trace_enter'
+   53 |         return copy_getcwd_arg((void *)args->args[0]);
+      |                                        ~~~~^
+progs/test_sleepable_tracepoints.c:48:32: note: forward declaration of 'struct syscall_trace_enter'
+   48 | int handle_sys_enter_tp(struct syscall_trace_enter *args)
+      |                                ^
+progs/test_sleepable_tracepoints.c:57:31: error: declaration of 'struct syscall_trace_exit' will not be visible outside of this function [-Werror,-Wvisibility]
+   57 | int handle_sys_exit_tp(struct syscall_trace_exit *args)
+      |                               ^
+progs/test_sleepable_tracepoints.c:81:38: error: declaration of 'struct syscall_trace_enter' will not be visible outside of this function [-Werror,-Wvisibility]
+   81 | int handle_sys_enter_tp_alias(struct syscall_trace_enter *args)
+      |                                      ^
+  SKIP-BPF     test_lwt_ip_encap.bpf.o
+  SKIP-SKEL    test_lwt_ip_encap.skel.h
+5 errors generated.
+  SKIP-BPF     test_bpf_nf.bpf.o
+  SKIP-SKEL    test_bpf_nf.skel.h
+4 errors generated.
+  SKIP-BPF     test_sleepable_tracepoints.bpf.o
+  SKIP-SKEL    test_sleepable_tracepoints.skel.h
+  TEST-OBJ [test_progs] fs_kfuncs.test.o
+  TEST-OBJ [test_progs] token.test.o
+  TEST-HDR [test_progs] tests.h
+  TEST-OBJ [test_progs] bpf_nf.test.o
+  TEST-OBJ [test_progs] bpf_qdisc.test.o
+  TEST-OBJ [test_progs] cgroup_iter_memcg.test.o
+  TEST-OBJ [test_progs] lwt_ip_encap.test.o
+  TEST-OBJ [test_progs] lwt_misc.test.o
+  TEST-OBJ [test_progs] mptcp.test.o
+  TEST-OBJ [test_progs] sleepable_tracepoints.test.o
+  TEST-OBJ [test_progs] test_profiler.test.o
+  TEST-OBJ [test_progs] vmlinux.test.o
+  EXT-OBJ  [test_progs] test_progs.o
+  EXT-OBJ  [test_progs] cgroup_helpers.o
+  EXT-OBJ  [test_progs] trace_helpers.o
+  EXT-OBJ  [test_progs] network_helpers.o
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c:11:10: fatal error: cgroup_iter_memcg.skel.h: No such file or directory
+   11 | #include "cgroup_iter_memcg.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/lwt_misc.c:4:10: fatal error: lwt_misc.skel.h: No such file or directory
+    4 | #include "lwt_misc.skel.h"
+      |          ^~~~~~~~~~~~~~~~~
+compilation terminated.
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/bpf_nf.c:5:10: fatal error: test_bpf_nf.skel.h: No such file or directory
+    5 | #include "test_bpf_nf.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/lwt_ip_encap.c:6:10: fatal error: test_lwt_ip_encap.skel.h: No such file or directory
+    6 | #include "test_lwt_ip_encap.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+  SKIP-TEST    lwt_misc.test.o
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/bpf_qdisc.c:8:10: fatal error: bpf_qdisc_fifo.skel.h: No such file or directory
+    8 | #include "bpf_qdisc_fifo.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+  SKIP-TEST    bpf_nf.test.o
+  SKIP-TEST    cgroup_iter_memcg.test.o
+  SKIP-TEST    lwt_ip_encap.test.o
+  EXT-OBJ  [test_progs] testing_helpers.o
+  EXT-OBJ  [test_progs] btf_helpers.o
+  EXT-OBJ  [test_progs] cap_helpers.o
+  SKIP-TEST    bpf_qdisc.test.o
+  EXT-OBJ  [test_progs] unpriv_helpers.o
+  EXT-OBJ  [test_progs] sysctl_helpers.o
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/sleepable_tracepoints.c:6:10: fatal error: test_sleepable_tracepoints.skel.h: No such file or directory
+    6 | #include "test_sleepable_tracepoints.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/mptcp.c:12:10: fatal error: mptcp_sock.skel.h: No such file or directory
+   12 | #include "mptcp_sock.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+  SKIP-TEST    sleepable_tracepoints.test.o
+  EXT-OBJ  [test_progs] netlink_helpers.o
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/test_profiler.c:5:10: fatal error: profiler1.skel.h: No such file or directory
+    5 | #include "profiler1.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+  SKIP-TEST    mptcp.test.o
+  EXT-OBJ  [test_progs] jit_disasm_helpers.o
+  SKIP-TEST    test_profiler.test.o
+  EXT-OBJ  [test_progs] io_helpers.o
+/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf/prog_tests/vmlinux.c:6:10: fatal error: test_vmlinux.skel.h: No such file or directory
+    6 | #include "test_vmlinux.skel.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+  EXT-OBJ  [test_progs] test_loader.o
+  SKIP-TEST    vmlinux.test.o
+  EXT-OBJ  [test_progs] xsk.o
+  EXT-OBJ  [test_progs] disasm.o
+  EXT-OBJ  [test_progs] disasm_helpers.o
+  EXT-OBJ  [test_progs] json_writer.o
+  EXT-OBJ  [test_progs] bpftool_helpers.o
+  EXT-OBJ  [test_progs] usdt_1.o
+  EXT-OBJ  [test_progs] usdt_2.o
+  CC [M]  bpf_testmod.mod.o
+  CC [M]  .module-common.o
+  CC [M]  bpf_test_no_cfi.mod.o
+  CC [M]  bpf_test_modorder_x.mod.o
+  CC [M]  bpf_test_modorder_y.mod.o
+  CC [M]  bpf_test_rqspinlock.mod.o
+  LD [M]  bpf_test_no_cfi.ko
+  LD [M]  bpf_test_modorder_x.ko
+  LD [M]  bpf_test_modorder_y.ko
+  BTF [M] bpf_test_modorder_x.ko
+  BTF [M] bpf_test_no_cfi.ko
+  BTF [M] bpf_test_modorder_y.ko
+  LD [M]  bpf_testmod.ko
+  BTF [M] bpf_testmod.ko
+  LD [M]  bpf_test_rqspinlock.ko
+  BTF [M] bpf_test_rqspinlock.ko
+  MOD      bpf_testmod.ko
+  MOD      bpf_test_no_cfi.ko
+  MOD      bpf_test_modorder_x.ko
+  MOD      bpf_test_modorder_y.ko
+  MOD      bpf_test_rqspinlock.ko
+  BINARY   test_progs
+make: Leaving directory '/home/dave/src/kernelsource.google.com/bpf-next/tools/testing/selftests/bpf'
+++ pwd
++ ./ci-repro/run-vm.sh /home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-v6.sh ci-repro/console-v6.log
+++ pwd
++ ./ci-repro/run-vm.sh /home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-v6-ramfs.sh ci-repro/console-v6-ramfs.log
+++ pwd
++ ./ci-repro/run-vm.sh /home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-v6-skip2.sh ci-repro/console-v6-skip2.log
++ set +x
+====== RESULTS tmpfs ======
+=== uname: 7.2.0-rc4-g0f1142ceada0
+=== rootfs: 9p
+=== /dev/shm: tmpfs
+#144/1   fs_kfuncs/user_xattr:OK
+#144/2   fs_kfuncs/security_bpf_xattr:OK
+#144/3   fs_kfuncs/security_bpf_xattr_error:OK
+#144/4   fs_kfuncs/security_selinux_xattr_error:OK
+#144/5   fs_kfuncs/set_remove_xattr:OK
+#144/6   fs_kfuncs/fsverity:SKIP
+#144/7   fs_kfuncs/init_inode_xattr:OK
+#144/8   fs_kfuncs/init_inode_xattr_slot_limit:OK
+#144     fs_kfuncs:OK (SKIP: 1/8)
+Summary: 1/7 PASSED, 1 SKIPPED, 0 FAILED
+=== test_progs rc=0
+====== RESULTS ramfs ======
+=== uname: 7.2.0-rc4-g0f1142ceada0
+=== /dev/shm fstype: ramfs
+#144/1   fs_kfuncs/user_xattr:OK
+#144/2   fs_kfuncs/security_bpf_xattr:OK
+#144/3   fs_kfuncs/security_bpf_xattr_error:OK
+#144/4   fs_kfuncs/security_selinux_xattr_error:OK
+#144/5   fs_kfuncs/set_remove_xattr:OK
+#144/6   fs_kfuncs/fsverity:SKIP
+#144/7   fs_kfuncs/init_inode_xattr:SKIP
+#144/8   fs_kfuncs/init_inode_xattr_slot_limit:SKIP
+#144     fs_kfuncs:OK (SKIP: 3/8)
+Summary: 1/5 PASSED, 3 SKIPPED, 0 FAILED
+=== test_progs rc=0
+====== RESULTS 9p-skip =====
+=== uname: 7.2.0-rc4-g0f1142ceada0
+=== /dev/shm fstype: devtmpfs
+#144/1   fs_kfuncs/user_xattr:OK
+#144/2   fs_kfuncs/security_bpf_xattr:OK
+#144/3   fs_kfuncs/security_bpf_xattr_error:OK
+#144/4   fs_kfuncs/security_selinux_xattr_error:OK
+#144/5   fs_kfuncs/set_remove_xattr:OK
+#144/6   fs_kfuncs/fsverity:SKIP
+#144/7   fs_kfuncs/init_inode_xattr:OK
+#144/8   fs_kfuncs/init_inode_xattr_slot_limit:OK
+#144     fs_kfuncs:OK (SKIP: 1/8)
+Summary: 1/7 PASSED, 1 SKIPPED, 0 FAILED
+=== test_progs rc=0
+!!! 9p: init_inode_xattr did not SKIP
+!!! 9p: slot_limit did not SKIP
+====== SELFTESTS FAILED - NOT ROLLING PATCHES ======

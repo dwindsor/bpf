@@ -1,0 +1,13 @@
+=== uname: 7.2.0-rc4-g0f1142ceada0
+=== /dev/shm fstype: ramfs
+#144/1   fs_kfuncs/user_xattr:OK
+#144/2   fs_kfuncs/security_bpf_xattr:OK
+#144/3   fs_kfuncs/security_bpf_xattr_error:OK
+#144/4   fs_kfuncs/security_selinux_xattr_error:OK
+#144/5   fs_kfuncs/set_remove_xattr:OK
+#144/6   fs_kfuncs/fsverity:SKIP
+#144/7   fs_kfuncs/init_inode_xattr:SKIP
+#144/8   fs_kfuncs/init_inode_xattr_slot_limit:SKIP
+#144     fs_kfuncs:OK (SKIP: 3/8)
+Summary: 1/5 PASSED, 3 SKIPPED, 0 FAILED
+=== test_progs rc=0

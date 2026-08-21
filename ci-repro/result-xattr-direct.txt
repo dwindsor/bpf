@@ -1,0 +1,11 @@
+=== uname: 7.2.0-g8c56a250bedd
+#146/1   fs_kfuncs/user_xattr:OK
+#146/2   fs_kfuncs/security_bpf_xattr:OK
+#146/3   fs_kfuncs/security_bpf_xattr_error:OK
+#146/4   fs_kfuncs/security_selinux_xattr_error:OK
+#146/5   fs_kfuncs/set_remove_xattr:OK
+#146/6   fs_kfuncs/init_inode_xattr:OK
+#146/7   fs_kfuncs/fsverity:SKIP
+#146     fs_kfuncs:OK (SKIP: 1/7)
+Summary: 1/6 PASSED, 1 SKIPPED, 0/0 FAILED
+=== test_progs rc=0

@@ -1934,7 +1934,7 @@ struct bpf_link {
 	 * link's semantics is determined by target attach hook
 	 */
 	bool sleepable;
-	/* set once by BPF_F_SEALED; blocks update/detach, pins link until reboot */
+	/* set at creation by BPF_F_SEALED; blocks update/detach, pins link until reboot */
 	bool sealed;
 };
 

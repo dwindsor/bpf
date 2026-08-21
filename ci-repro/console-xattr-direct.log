@@ -1,0 +1,80 @@
+c[?7l[2J[0mSeaBIOS (version 1.17.0-debian-1.17.0-1ubuntu1)
+Booting from ROM..c[?7l[2JNo EFI environment detected.
+early console in extract_kernel
+input_data: 0x00000000094222cc
+input_len: 0x0000000002a4cb82
+output: 0x0000000001000000
+output_len: 0x000000000ada0878
+kernel_total_size: 0x000000000a230000
+needed_size: 0x000000000ae00000
+trampoline_32bit: 0x0000000000000000
+Physical KASLR using RDRAND RDTSC...
+Virtual KASLR using RDRAND RDTSC...
+
+Decompressing Linux... No EFI environment detected.
+Parsing ELF... Performing relocations... done.
+Booting the kernel (entry_offset: 0x0000000007ca5fc0).
+[    0.000000] Linux version 7.2.0-g8c56a250bedd (dave@battery) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP PREEMPT_DYNAMIC Thu Aug 20 20:14:56 EDT 2026
+[    0.000000] Command line: rootfstype=9p rootflags=trans=virtio,cache=mmap,msize=1048576 rw console=ttyS0 earlyprintk=serial loglevel=4 raid=noautodetect init=/home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-xattr-direct.sh panic=-1 lsm=selinux,bpf
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000000a0000-0x00000000000effff]
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000c0000000-0x00000000feffbfff]
+[    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000ff000000-0x00000000fffbffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff]  System RAM
+[    0.000000] BIOS-e820: [gap 0x0000000140000000-0x000000fcffffffff]
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff]  device reserved
+[    0.000000] printk: legacy bootconsole [earlyser0] enabled
+Poking KASLR using RDRAND RDTSC...
+[    1.077806] intel_powerclamp: CPU does not support MWAIT
+[    1.496764] 9p: Bad value for 'source'
+[    3.192043] sysrq: Power Off
+[    3.196836] reboot: Power down
+/home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-xattr-direct.sh: line 27: sleep: command not found
+[    3.201078] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00007f00
+[    3.201808] CPU: 3 UID: 0 PID: 1 Comm: vminit-xattr-di Tainted: G           OE       7.2.0-g8c56a250bedd #1 PREEMPT(full) 
+[    3.201808] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[    3.201808] Hardware name: QEMU Ubuntu 26.04 PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1ubuntu1 04/01/2014
+[    3.201808] Call Trace:
+[    3.201808]  <TASK>
+[    3.201808]  dump_stack_lvl+0x5d/0x80
+[    3.201808]  vpanic+0x374/0x630
+[    3.201808]  ? __pfx_vpanic+0x10/0x10
+[    3.201808]  ? try_to_grab_pending+0x7b/0x900
+[    3.201808]  panic+0xce/0xd0
+[    3.201808]  ? __pfx_panic+0x10/0x10
+[    3.201808]  ? find_held_lock+0x2b/0x80
+[    3.201808]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    3.201808]  ? lockdep_hardirqs_on_prepare+0xdc/0x190
+[    3.201808]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    3.201808]  ? do_exit+0x378/0x24c0
+[    3.201808]  do_exit.cold+0x45/0x9e
+[    3.201808]  ? lock_acquire+0x17c/0x2f0
+[    3.201808]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    3.201808]  ? __pfx_do_exit+0x10/0x10
+[    3.201808]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    3.201808]  ? lock_release+0xd3/0x2e0
+[    3.201808]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    3.201808]  ? lockdep_hardirqs_on_prepare+0xdc/0x190
+[    3.201808]  do_group_exit+0xb8/0x370
+[    3.201808]  __x64_sys_exit_group+0x3c/0x50
+[    3.201808]  x64_sys_call+0x1567/0x1570
+[    3.201808]  do_syscall_64+0x106/0x690
+[    3.201808]  ? exc_page_fault+0xb3/0xd0
+[    3.201808]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[    3.201808] RIP: 0033:0x7f9c3c882418
+[    3.201808] Code: df 04 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 f3 0f 1e fa 48 8b 35 dd a9 11 00 eb 04 0f 1f 00 f4 b8 e7 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 f0 f7 d8 64 89 06 eb e9 66 0f 1f 84 00 00 00
+[    3.201808] RSP: 002b:00007ffceef912f8 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+[    3.201808] RAX: ffffffffffffffda RBX: 00007f9c3c99ef88 RCX: 00007f9c3c882418
+[    3.201808] RDX: 00007f9c3c788a48 RSI: ffffffffffffffb0 RDI: 000000000000007f
+[    3.201808] RBP: 00007ffceef91350 R08: 0000000000000000 R09: 0000000000000000
+[    3.201808] R10: 00007ffceef91180 R11: 0000000000000202 R12: 0000000000000001
+[    3.201808] R13: 000000000000007f R14: 00007f9c3c99d680 R15: 00007f9c3c99efa0
+[    3.201808]  </TASK>
+[    3.201808] Kernel Offset: 0x31000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)

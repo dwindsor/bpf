@@ -1,0 +1,39 @@
+c[?7l[2J[0mSeaBIOS (version 1.17.0-debian-1.17.0-1ubuntu1)
+Booting from ROM..c[?7l[2JNo EFI environment detected.
+early console in extract_kernel
+input_data: 0x00000000094232cc
+input_len: 0x0000000002a4bd80
+output: 0x0000000001000000
+output_len: 0x000000000ada079c
+kernel_total_size: 0x000000000a230000
+needed_size: 0x000000000ae00000
+trampoline_32bit: 0x0000000000000000
+Physical KASLR using RDRAND RDTSC...
+Virtual KASLR using RDRAND RDTSC...
+
+Decompressing Linux... No EFI environment detected.
+Parsing ELF... Performing relocations... done.
+Booting the kernel (entry_offset: 0x0000000007ca5fc0).
+[    0.000000] Linux version 7.2.0-g11df52197b0a (root@battery) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #3 SMP PREEMPT_DYNAMIC Fri Aug 21 13:44:55 EDT 2026
+[    0.000000] Command line: rootfstype=9p rootflags=trans=virtio,cache=mmap,msize=1048576 rw console=ttyS0 earlyprintk=serial loglevel=4 raid=noautodetect init=/home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-link-seal-v2-rebase.sh panic=-1 lsm=selinux,bpf
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000000a0000-0x00000000000effff]
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000c0000000-0x00000000feffbfff]
+[    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000ff000000-0x00000000fffbffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff]  System RAM
+[    0.000000] BIOS-e820: [gap 0x0000000140000000-0x000000fcffffffff]
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff]  device reserved
+[    0.000000] printk: legacy bootconsole [earlyser0] enabled
+Poking KASLR using RDRAND RDTSC...
+[    1.426437] intel_powerclamp: CPU does not support MWAIT
+[    1.849929] 9p: Bad value for 'source'
+[    4.527763] sysrq: Power Off
+[    4.533047] reboot: Power down
+/home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-link-seal-v2-rebase.sh: line 65: sleep: command not found

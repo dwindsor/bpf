@@ -1383,6 +1383,29 @@ __bpf_kfunc void bpf_kfunc_trigger_ctx_check(void)
 	irq_work_queue(&ctx_check_irq);
 }
 
+/* Unseal a sealed BPF link and drop its sealing self-reference, so tests can
+ * clean up sealed links instead of pinning them until reboot. Test-only: the
+ * kernel proper provides no way to unseal a link.
+ */
+__bpf_kfunc int bpf_kfunc_link_force_unseal(int link_fd)
+{
+	struct bpf_link *link;
+
+	link = bpf_link_get_from_fd(link_fd);
+	if (IS_ERR(link))
+		return PTR_ERR(link);
+
+	if (!link->sealed) {
+		bpf_link_put(link);
+		return -EINVAL;
+	}
+
+	link->sealed = false;
+	bpf_link_put(link);	/* drop the sealing self-reference */
+	bpf_link_put(link);	/* drop our lookup reference */
+	return 0;
+}
+
 BTF_KFUNCS_START(bpf_testmod_check_kfunc_ids)
 BTF_ID_FLAGS(func, bpf_testmod_test_mod_kfunc)
 BTF_ID_FLAGS(func, bpf_kfunc_call_test1)
@@ -1439,6 +1462,7 @@ BTF_ID_FLAGS(func, bpf_kfunc_implicit_arg, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, bpf_kfunc_implicit_arg_legacy, KF_IMPLICIT_ARGS)
 BTF_ID_FLAGS(func, bpf_kfunc_implicit_arg_legacy_impl)
 BTF_ID_FLAGS(func, bpf_kfunc_trigger_ctx_check)
+BTF_ID_FLAGS(func, bpf_kfunc_link_force_unseal, KF_SLEEPABLE)
 BTF_KFUNCS_END(bpf_testmod_check_kfunc_ids)
 
 static int bpf_testmod_ops_init(struct btf *btf)
@@ -2103,3 +2127,4 @@ module_exit(bpf_testmod_exit);
 MODULE_AUTHOR("Andrii Nakryiko");
 MODULE_DESCRIPTION("BPF selftests module");
 MODULE_LICENSE("Dual BSD/GPL");
+MODULE_IMPORT_NS("BPF_INTERNAL");

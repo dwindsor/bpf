@@ -1,0 +1,58 @@
+=== uname: 7.2.0-g11df52197b0a
+=== bpf_testmod.ko size: 1205144
+insmod: ERROR: could not insert module ./bpf_testmod.ko: Invalid module format
+=== insmod rc=1 dmesg:
+[    1.857104] VFS: Pivoted into new rootfs
+[    1.883095] Freeing unused decrypted memory: 2036K
+[    1.886208] Freeing unused kernel image (initmem) memory: 8612K
+[    1.886233] Write protecting the kernel read-only data: 98304k
+[    1.888134] Freeing unused kernel image (text/rodata gap) memory: 1780K
+[    1.888297] Freeing unused kernel image (rodata/data gap) memory: 36K
+[    1.948961] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    1.949021] Run /home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-link-seal-v2-rebase.sh as init process
+[    1.949027]   with arguments:
+[    1.949031]     /home/dave/src/kernelsource.google.com/bpf-next/ci-repro/vminit-link-seal-v2-rebase.sh
+[    1.949035]   with environment:
+[    1.949039]     HOME=/
+[    1.949042]     TERM=linux
+[    2.121756] mount (95) used greatest stack depth: 25912 bytes left
+[    2.701522] mount (105) used greatest stack depth: 25672 bytes left
+[    3.074509] clocksource: Marking clocksource tsc unstable due to inter CPU skew
+[    3.074546] clocksource: CPU0      12331578327 < CPU3      12331581112 (cycles)
+[    3.074552] tsc: Marking TSC unstable due to clocksource watchdog
+[    3.171297] wc (111) used greatest stack depth: 25432 bytes left
+[    3.234939] bpf_testmod: disagrees about version of symbol module_layout
+=== [1] links before test:
+1: iter  prog 2  target_name bpf_map  
+2: iter  prog 3  target_name bpf_prog  
+=== link count before: 2
+=== [2] running test_progs -t link_seal
+WARNING! Selftests relying on bpf_testmod.ko will be skipped.
+bpf_testmod.ko is already unloaded.
+Loading bpf_testmod.ko...
+Failed to load bpf_testmod.ko into the kernel: -8
+libbpf: extern (func ksym) 'bpf_kfunc_link_force_unseal': not found in kernel or module BTFs
+libbpf: failed to load BPF skeleton 'test_link_seal': -EINVAL
+test_link_seal:FAIL:open_and_load unexpected error: -22
+#209     link_seal:FAIL
+Summary: 0/0 PASSED, 0 SKIPPED, 1/0 FAILED
+=== test_progs rc=1
+=== [3] links after test (must be empty):
+1: iter  prog 2  target_name bpf_map  
+2: iter  prog 3  target_name bpf_prog  
+=== link count after: 2
+=== [4] positive control: sealed link without unseal
+insmod: ERROR: could not insert module ./bpf_testmod.ko: Invalid module format
+libbpf: extern (func ksym) 'bpf_kfunc_link_force_unseal': not found in kernel or module BTFs
+load failed: -22
+=== demo rc=1 output: 
+=== [5] links after control (leaked sealed link must persist):
+1: iter  prog 2  target_name bpf_map  
+2: iter  prog 3  target_name bpf_prog  
+=== link count after control: 2
+=== [6] try to detach leaked sealed link id= via bpftool:
+Error: failed to get link with ID 0: No such file or directory
+=== detach rc=1 (must fail with EPERM)
+1: iter  prog 2  target_name bpf_map  
+2: iter  prog 3  target_name bpf_prog  
+=== link count final: 2

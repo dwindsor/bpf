@@ -1,0 +1,18 @@
+=== uname: 7.2.0-rc4-gbf7556b7d95d-dirty
+setup                        PASS (prog_a=3 prog_b=4 cg_fd=5)
+create_unsealed              PASS (fd=6)
+update_unsealed              PASS (err=0)
+detach_unsealed              PASS (err=0)
+create_sealed                PASS (fd=6)
+    fdinfo: link_id:	2
+    fdinfo: sealed:	1
+update_sealed_eperm          PASS (err=-1)
+detach_sealed_eperm          PASS (err=-1)
+get_ids                      PASS (link_id=2 prog_id=3)
+alive_after_close            PASS (fd=3)
+    fdinfo: link_id:	2
+    fdinfo: sealed:	1
+detach_via_new_fd_eperm      PASS (err=-1)
+prog_still_attached          PASS (prog_id=3)
+=== SUCCESS (0 failures)
+=== demo rc=0

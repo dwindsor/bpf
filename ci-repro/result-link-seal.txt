@@ -1,0 +1,14 @@
+=== uname: 7.2.0-rc4-gbf7556b7d95d-dirty
+bpf_testmod.ko is already unloaded.
+Loading bpf_testmod.ko...
+Successfully loaded bpf_testmod.ko.
+test_link_seal:PASS:skel_load 0 nsec
+test_link_seal:PASS:create_sealed 0 nsec
+test_link_seal:PASS:update_sealed 0 nsec
+test_link_seal:PASS:detach_sealed 0 nsec
+test_link_seal:PASS:create_plain 0 nsec
+test_link_seal:PASS:update_plain 0 nsec
+#203     link_seal:OK
+Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
+Successfully unloaded bpf_testmod.ko.
+=== test_progs rc=0
