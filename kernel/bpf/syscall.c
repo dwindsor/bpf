@@ -3429,6 +3429,7 @@ static void bpf_link_show_fdinfo(struct seq_file *m, struct file *filp)
 		seq_printf(m, "link_type:\t<%u>\n", type);
 	}
 	seq_printf(m, "link_id:\t%u\n", link->id);
+	seq_printf(m, "sealed:\t%d\n", link->sealed ? 1 : 0);
 
 	rcu_read_lock();
 	prog = READ_ONCE(link->prog);
@@ -3535,6 +3536,8 @@ int bpf_link_prime(struct bpf_link *link, struct bpf_link_primer *primer)
 
 int bpf_link_settle(struct bpf_link_primer *primer)
 {
+	if (primer->link->sealed)
+		bpf_link_inc(primer->link);
 	/* make bpf_link fetchable by ID */
 	spin_lock_bh(&link_idr_lock);
 	primer->link->id = primer->id;
@@ -3638,7 +3641,8 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
 				   int tgt_prog_fd,
 				   u32 btf_id,
 				   u64 bpf_cookie,
-				   enum bpf_attach_type attach_type)
+				   enum bpf_attach_type attach_type,
+				   bool sealed)
 {
 	struct bpf_link_primer link_primer;
 	struct bpf_prog *tgt_prog = NULL;
@@ -3708,6 +3712,7 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
 	}
 	bpf_tramp_link_init(&link->link, BPF_LINK_TYPE_TRACING,
 			    &bpf_tracing_link_lops, prog, attach_type, bpf_cookie);
+	link->link.link.sealed = sealed;
 
 	if (prog->expected_attach_type == BPF_TRACE_FSESSION) {
 		link->fexit.link = &link->link.link;
@@ -4322,7 +4327,7 @@ static int bpf_raw_tp_link_attach(struct bpf_prog *prog,
 			tp_name = prog->aux->attach_func_name;
 			break;
 		}
-		return bpf_tracing_prog_attach(prog, 0, 0, 0, attach_type);
+		return bpf_tracing_prog_attach(prog, 0, 0, 0, attach_type, false);
 	case BPF_PROG_TYPE_RAW_TRACEPOINT:
 	case BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE:
 		if (strncpy_from_user(buf, user_tp_name, sizeof(buf) - 1) < 0)
@@ -5797,13 +5802,18 @@ err_put:
 static int link_create(union bpf_attr *attr, bpfptr_t uattr)
 {
 	struct bpf_prog *prog;
+	bool seal;
 	int ret;
 
 	if (CHECK_ATTR(BPF_LINK_CREATE))
 		return -EINVAL;
 
+	seal = attr->link_create.flags & BPF_F_LINK_SEALED;
+	if (seal && !capable(CAP_SYS_ADMIN))
+		return -EPERM;
+
 	if (attr->link_create.attach_type == BPF_STRUCT_OPS)
-		return bpf_struct_ops_link_create(attr);
+		return seal ? -EOPNOTSUPP : bpf_struct_ops_link_create(attr);
 
 	prog = bpf_prog_get(attr->link_create.prog_fd);
 	if (IS_ERR(prog))
@@ -5829,7 +5839,8 @@ static int link_create(union bpf_attr *attr, bpfptr_t uattr)
 					      attr->link_create.target_fd,
 					      attr->link_create.target_btf_id,
 					      attr->link_create.tracing.cookie,
-					      attr->link_create.attach_type);
+					      attr->link_create.attach_type,
+					      seal);
 		break;
 	case BPF_PROG_TYPE_LSM:
 	case BPF_PROG_TYPE_TRACING:
@@ -5838,7 +5849,8 @@ static int link_create(union bpf_attr *attr, bpfptr_t uattr)
 			goto out;
 		}
 		if (prog->expected_attach_type == BPF_TRACE_RAW_TP)
-			ret = bpf_raw_tp_link_attach(prog, NULL, attr->link_create.tracing.cookie,
+			ret = seal ? -EOPNOTSUPP :
+			      bpf_raw_tp_link_attach(prog, NULL, attr->link_create.tracing.cookie,
 						     attr->link_create.attach_type);
 		else if (prog->expected_attach_type == BPF_TRACE_ITER)
 			ret = bpf_iter_link_attach(attr, uattr, prog);
@@ -5851,7 +5863,8 @@ static int link_create(union bpf_attr *attr, bpfptr_t uattr)
 						      attr->link_create.target_fd,
 						      attr->link_create.target_btf_id,
 						      attr->link_create.tracing.cookie,
-						      attr->link_create.attach_type);
+						      attr->link_create.attach_type,
+						      seal);
 		break;
 	case BPF_PROG_TYPE_FLOW_DISSECTOR:
 	case BPF_PROG_TYPE_SK_LOOKUP:
@@ -5949,6 +5962,11 @@ static int link_update(union bpf_attr *attr)
 	if (IS_ERR(link))
 		return PTR_ERR(link);
 
+	if (link->sealed) {
+		ret = -EPERM;
+		goto out_put_link;
+	}
+
 	if (link->ops->update_map) {
 		ret = link_update_map(link, attr);
 		goto out_put_link;
@@ -6001,7 +6019,9 @@ static int link_detach(union bpf_attr *attr)
 	if (IS_ERR(link))
 		return PTR_ERR(link);
 
-	if (link->ops->detach)
+	if (link->sealed)
+		ret = -EPERM;
+	else if (link->ops->detach)
 		ret = link->ops->detach(link);
 	else
 		ret = -EOPNOTSUPP;
