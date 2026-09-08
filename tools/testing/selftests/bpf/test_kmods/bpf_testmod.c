@@ -1358,6 +1358,32 @@ __bpf_kfunc void bpf_kfunc_call_test_sleepable(void)
 {
 }
 
+/* Test only: drop the self-reference a sealed link holds so selftests can
+ * free sealed links instead of pinning them until reboot. The kernel itself
+ * deliberately offers no way to unseal a link.
+ */
+__bpf_kfunc int bpf_kfunc_link_force_unseal(int link_fd)
+{
+	struct bpf_link *link;
+
+	link = bpf_link_get_from_fd(link_fd);
+	if (IS_ERR(link))
+		return PTR_ERR(link);
+
+	if (!link->sealed) {
+		bpf_link_put(link);
+		return -EINVAL;
+	}
+
+	link->sealed = false;
+	/* one put for the lookup above, one for the reference sealing took;
+	 * the caller still holds link_fd so the link stays alive here
+	 */
+	bpf_link_put(link);
+	bpf_link_put(link);
+	return 0;
+}
+
 struct bpf_kfunc_rcu_tasks_trace_data {
 	struct rcu_head rcu;
 	int *done;
@@ -1755,6 +1781,7 @@ BTF_ID_FLAGS(func, bpf_kfunc_call_test_destructive, KF_DESTRUCTIVE)
 BTF_ID_FLAGS(func, bpf_kfunc_call_test_static_unused_arg)
 BTF_ID_FLAGS(func, bpf_kfunc_call_test_offset)
 BTF_ID_FLAGS(func, bpf_kfunc_call_test_sleepable, KF_SLEEPABLE)
+BTF_ID_FLAGS(func, bpf_kfunc_link_force_unseal, KF_SLEEPABLE)
 BTF_ID_FLAGS(func, bpf_kfunc_call_test_call_rcu_tasks_trace)
 BTF_ID_FLAGS(func, bpf_kfunc_init_sock, KF_SLEEPABLE)
 BTF_ID_FLAGS(func, bpf_kfunc_close_sock, KF_SLEEPABLE)
@@ -2449,3 +2476,4 @@ module_exit(bpf_testmod_exit);
 MODULE_AUTHOR("Andrii Nakryiko");
 MODULE_DESCRIPTION("BPF selftests module");
 MODULE_LICENSE("Dual BSD/GPL");
+MODULE_IMPORT_NS("BPF_INTERNAL");
