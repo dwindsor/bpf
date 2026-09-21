@@ -50,19 +50,72 @@ int BPF_PROG(observe_free, struct bpf_link *link)
 	return 0;
 }
 
-/* The two VFS paths that could drop a bpffs pin from user space. */
-SEC("lsm/sb_umount")
-int BPF_PROG(observe_umount, struct vfsmount *mnt, int flags)
+/* The "protected pin" alternative: instead of a kernel-owned reference, a
+ * bpffs pin holds the link and policy forbids removing the pin. Set to the
+ * pin's inode number to arm it; also arms the bpffs umount denial.
+ */
+__u64 protected_pin_ino;
+__u64 pin_denials;
+
+/* The init mount namespace has a fixed nsfs inode number (uapi nsfs.h). */
+#define MNT_NS_INIT_INO 0xEFFFFFF8U
+
+static bool in_init_mntns(void)
 {
-	if (mnt->mnt_sb->s_magic == BPF_FS_MAGIC)
-		__sync_fetch_and_add(&umount_hook_calls, 1);
-	return 0;
+	struct task_struct *cur = bpf_get_current_task_btf();
+
+	return cur->nsproxy->mnt_ns->ns.inum == MNT_NS_INIT_INO;
+}
+
+static bool is_protected_pin(struct dentry *dentry)
+{
+	struct inode *inode = dentry->d_inode;
+
+	return protected_pin_ino && inode &&
+	       inode->i_sb->s_magic == BPF_FS_MAGIC &&
+	       inode->i_ino == protected_pin_ino;
+}
+
+/* The three VFS requests that could drop a bpffs pin from user space. Each
+ * is counted for bpffs and, once armed, denied for the protected pin.
+ */
+SEC("lsm/sb_umount")
+int BPF_PROG(guard_umount, struct vfsmount *mnt, int flags)
+{
+	if (mnt->mnt_sb->s_magic != BPF_FS_MAGIC)
+		return 0;
+	__sync_fetch_and_add(&umount_hook_calls, 1);
+
+	/* Denying every bpffs umount would break container runtimes, which
+	 * unmount their copy of the host mount tree after pivot_root(); only
+	 * the init mount namespace holds the pin that matters.
+	 */
+	if (!protected_pin_ino || !in_init_mntns())
+		return 0;
+	__sync_fetch_and_add(&pin_denials, 1);
+	return -EPERM;
 }
 
 SEC("lsm/inode_unlink")
-int BPF_PROG(observe_unlink, struct inode *dir, struct dentry *dentry)
+int BPF_PROG(guard_unlink, struct inode *dir, struct dentry *dentry)
 {
-	if (dir->i_sb->s_magic == BPF_FS_MAGIC)
-		__sync_fetch_and_add(&unlink_hook_calls, 1);
-	return 0;
+	if (dir->i_sb->s_magic != BPF_FS_MAGIC)
+		return 0;
+	__sync_fetch_and_add(&unlink_hook_calls, 1);
+
+	if (!is_protected_pin(dentry))
+		return 0;
+	__sync_fetch_and_add(&pin_denials, 1);
+	return -EPERM;
+}
+
+SEC("lsm/inode_rename")
+int BPF_PROG(guard_rename, struct inode *old_dir, struct dentry *old_dentry,
+	     struct inode *new_dir, struct dentry *new_dentry)
+{
+	/* moving the pin away, or renaming something over it */
+	if (!is_protected_pin(old_dentry) && !is_protected_pin(new_dentry))
+		return 0;
+	__sync_fetch_and_add(&pin_denials, 1);
+	return -EPERM;
 }

@@ -5,6 +5,7 @@
 #include <sched.h>
 #include <signal.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <test_progs.h>
 #include "test_link_lsm.skel.h"
@@ -156,9 +157,9 @@ out:
 }
 
 /* Fork a "trusted loader" that creates the guarded link and reports its
- * ID, then blocks until killed or told to exit. With @bpffs_dir set it
- * first mounts bpffs there in a private mount namespace, pins the link and
- * closes its fd, so the pin is the only reference.
+ * ID, then blocks until killed or told to exit. With @bpffs_dir set it pins
+ * the link there and closes its fd, so the pin is the only reference; with
+ * @private_ns it first mounts bpffs there in a private mount namespace.
  */
 struct loader {
 	pid_t pid;
@@ -168,7 +169,7 @@ struct loader {
 };
 
 static void loader_child(struct test_link_lsm *skel, int rd, int wr,
-			 const char *bpffs_dir, bool sealed)
+			 const char *bpffs_dir, bool private_ns, bool sealed)
 {
 	char path[PATH_MAX];
 	int link_fd;
@@ -178,7 +179,7 @@ static void loader_child(struct test_link_lsm *skel, int rd, int wr,
 	if (read(rd, &go, 1) != 1)
 		_exit(10);
 
-	if (bpffs_dir) {
+	if (private_ns) {
 		if (unshare(CLONE_NEWNS))
 			_exit(11);
 		if (mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL))
@@ -211,7 +212,7 @@ static void loader_child(struct test_link_lsm *skel, int rd, int wr,
 }
 
 static int loader_start(struct test_link_lsm *skel, struct loader *ld,
-			const char *bpffs_dir, bool sealed)
+			const char *bpffs_dir, bool private_ns, bool sealed)
 {
 	int to_child[2], from_child[2];
 	char go = 'g';
@@ -226,7 +227,7 @@ static int loader_start(struct test_link_lsm *skel, struct loader *ld,
 		close(to_child[1]);
 		close(from_child[0]);
 		loader_child(skel, to_child[0], from_child[1], bpffs_dir,
-			     sealed);
+			     private_ns, sealed);
 	}
 	close(to_child[0]);
 	close(from_child[1]);
@@ -278,7 +279,7 @@ static void test_loader_killed(struct test_link_lsm *skel)
 {
 	struct loader ld;
 
-	if (!ASSERT_OK(loader_start(skel, &ld, NULL, false), "loader_start"))
+	if (!ASSERT_OK(loader_start(skel, &ld, NULL, false, false), "loader_start"))
 		return;
 	check_guarded(skel, ld.id, false);
 
@@ -304,7 +305,7 @@ static void test_pinned_in_dying_mntns(struct test_link_lsm *skel)
 
 	if (!ASSERT_OK_PTR(mkdtemp(dir), "mkdtemp"))
 		return;
-	if (!ASSERT_OK(loader_start(skel, &ld, dir, false), "loader_start"))
+	if (!ASSERT_OK(loader_start(skel, &ld, dir, true, false), "loader_start"))
 		goto out;
 	check_guarded(skel, ld.id, false);
 
@@ -332,7 +333,7 @@ static void test_sealed_survives_loader_kill(struct test_link_lsm *skel)
 	struct loader ld;
 	int fd;
 
-	if (!ASSERT_OK(loader_start(skel, &ld, NULL, true), "loader_start"))
+	if (!ASSERT_OK(loader_start(skel, &ld, NULL, false, true), "loader_start"))
 		return;
 	check_guarded(skel, ld.id, true);
 
@@ -355,6 +356,147 @@ static void test_sealed_survives_loader_kill(struct test_link_lsm *skel)
 	skel->bss->guarded_link_id = 0;
 }
 
+/* Expect a VFS request on the pin to be refused, and the link to survive. */
+static void expect_pin_refused(struct test_link_lsm *skel, __u32 id, int ret,
+			       __u64 denials_before, const char *what)
+{
+	char buf[64];
+
+	snprintf(buf, sizeof(buf), "%s_refused", what);
+	ASSERT_TRUE(ret == -1 && errno == EPERM, buf);
+	snprintf(buf, sizeof(buf), "%s_denied_by_policy", what);
+	ASSERT_EQ(skel->bss->pin_denials, denials_before + 1, buf);
+	snprintf(buf, sizeof(buf), "link_alive_after_%s", what);
+	ASSERT_TRUE(link_alive(id), buf);
+}
+
+/* From a private mount namespace, unmount our copy of the bpffs mount. The
+ * policy is scoped to the init namespace, so this is allowed and must not
+ * affect the pin held by the original mount.
+ */
+static int umount_from_private_ns(const char *dir)
+{
+	int status;
+	pid_t pid;
+
+	pid = fork();
+	if (pid < 0)
+		return -errno;
+	if (pid == 0) {
+		if (unshare(CLONE_NEWNS))
+			_exit(1);
+		if (mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL))
+			_exit(2);
+		if (umount2(dir, MNT_DETACH))
+			_exit(3);
+		_exit(0);
+	}
+	waitpid(pid, &status, 0);
+	return WEXITSTATUS(status);
+}
+
+/* The alternative to sealing: pin the link in a bpffs mount in the init
+ * mount namespace and have policy refuse every request that could remove
+ * the pin. The loader can die; the pin holds the link. Then try, from an
+ * untrusted process, everything that would drop the pin.
+ */
+static void test_protected_pin(struct test_link_lsm *skel)
+{
+	char parent[] = "/tmp/link_lsm_XXXXXX";
+	char dir[sizeof(parent) + 8], pin[sizeof(dir) + 8], other[sizeof(dir) + 8];
+	bool mounted = false;
+	__u64 denials, umounts;
+	struct loader ld;
+	struct stat st;
+	int err;
+
+	/* bpffs is mounted inside a tmpfs, so it has an ancestor mount that
+	 * is not the root; the real /sys/fs/bpf has two (/sys and /sys/fs)
+	 */
+	if (!ASSERT_OK_PTR(mkdtemp(parent), "mkdtemp"))
+		return;
+	if (!ASSERT_OK(mount("tmpfs", parent, "tmpfs", 0, NULL), "mount_tmpfs"))
+		goto out;
+	mounted = true;
+	snprintf(dir, sizeof(dir), "%s/bpf", parent);
+	if (!ASSERT_OK(mkdir(dir, 0755), "mkdir_bpf") ||
+	    !ASSERT_OK(mount("bpffs", dir, "bpf", 0, NULL), "mount_bpffs"))
+		goto out;
+	snprintf(pin, sizeof(pin), "%s/policy", dir);
+	snprintf(other, sizeof(other), "%s/other", dir);
+
+	if (!ASSERT_OK(loader_start(skel, &ld, dir, false, false), "loader_start"))
+		goto out;
+	check_guarded(skel, ld.id, false);
+
+	/* arm the pin protection on exactly this inode */
+	if (!ASSERT_OK(stat(pin, &st), "stat_pin"))
+		goto out_loader;
+	skel->bss->protected_pin_ino = st.st_ino;
+
+	/* the loader dies; the pin, not the loader, holds the link */
+	loader_end(&ld, true);
+	ASSERT_FALSE(wait_link_gone(ld.id), "pin_holds_link_after_kill");
+	ASSERT_EQ(skel->bss->free_hook_calls, 0, "not_freed");
+
+	/* every user space request that could drop the pin is refused */
+	denials = skel->bss->pin_denials;
+	expect_pin_refused(skel, ld.id, unlink(pin), denials++, "unlink");
+	expect_pin_refused(skel, ld.id, rename(pin, other), denials++,
+			   "rename_away");
+
+	/* rename something else over it; the something else may then go */
+	err = bpf_obj_pin(bpf_program__fd(skel->progs.policy), other);
+	if (ASSERT_OK(err, "pin_other")) {
+		expect_pin_refused(skel, ld.id, rename(other, pin), denials++,
+				   "rename_over");
+		ASSERT_OK(unlink(other), "unlink_other_allowed");
+		ASSERT_EQ(skel->bss->pin_denials, denials, "other_not_denied");
+	}
+
+	expect_pin_refused(skel, ld.id, umount2(dir, 0), denials++, "umount");
+	expect_pin_refused(skel, ld.id, umount2(dir, MNT_DETACH), denials++,
+			   "umount_detach");
+	expect_pin_refused(skel, ld.id, umount2(dir, MNT_FORCE), denials++,
+			   "umount_force");
+
+	/* a container tearing down its own copy of the mount is not our
+	 * problem and must not be refused
+	 */
+	ASSERT_OK(umount_from_private_ns(dir), "private_ns_umount_allowed");
+	ASSERT_EQ(skel->bss->pin_denials, denials, "private_ns_not_denied");
+	ASSERT_TRUE(link_alive(ld.id), "link_alive_after_private_ns_umount");
+
+	/* The hole: sb_umount is only called for the mount named in the
+	 * syscall, not for the mounts detached along with it. Lazily detach
+	 * the bpffs mount's parent, still armed. The policy sees a tmpfs
+	 * umount and lets it through, the bpffs mount goes with it, and the
+	 * pin takes the link down.
+	 */
+	umounts = skel->bss->umount_hook_calls;
+	ASSERT_OK(umount2(parent, MNT_DETACH), "umount_parent_allowed");
+	ASSERT_EQ(skel->bss->pin_denials, denials, "parent_umount_not_denied");
+	ASSERT_EQ(skel->bss->umount_hook_calls, umounts,
+		  "bpffs_umount_hook_not_consulted");
+	ASSERT_TRUE(wait_link_gone(ld.id), "link_gone_after_parent_umount");
+	ASSERT_TRUE(wait_counter(&skel->bss->free_hook_calls, 1),
+		    "free_hook_saw_teardown");
+	mounted = false;
+	goto out;
+
+out_loader:
+	loader_end(&ld, true);
+out:
+	skel->bss->protected_pin_ino = 0;
+	skel->bss->guarded_link_id = 0;
+	if (mounted) {
+		unlink(pin);
+		umount2(dir, MNT_DETACH);
+		umount2(parent, MNT_DETACH);
+	}
+	rmdir(parent);
+}
+
 static void reset_counters(struct test_link_lsm *skel)
 {
 	skel->bss->guarded_link_id = 0;
@@ -363,6 +505,8 @@ static void reset_counters(struct test_link_lsm *skel)
 	skel->bss->free_hook_calls = 0;
 	skel->bss->umount_hook_calls = 0;
 	skel->bss->unlink_hook_calls = 0;
+	skel->bss->protected_pin_ino = 0;
+	skel->bss->pin_denials = 0;
 }
 
 void test_link_lsm(void)
@@ -394,6 +538,10 @@ void test_link_lsm(void)
 	if (test__start_subtest("sealed_survives_loader_kill")) {
 		reset_counters(skel);
 		test_sealed_survives_loader_kill(skel);
+	}
+	if (test__start_subtest("protected_pin")) {
+		reset_counters(skel);
+		test_protected_pin(skel);
 	}
 out:
 	test_link_lsm__destroy(skel);
