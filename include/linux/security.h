@@ -2297,6 +2297,7 @@ union bpf_attr;
 struct bpf_map;
 struct bpf_prog;
 struct bpf_token;
+struct bpf_link;
 #ifdef CONFIG_SECURITY
 extern int security_bpf(int cmd, union bpf_attr *attr, unsigned int size, bool kernel);
 extern int security_bpf_map(struct bpf_map *map, fmode_t fmode);
@@ -2312,6 +2313,8 @@ extern int security_bpf_token_create(struct bpf_token *token, union bpf_attr *at
 extern void security_bpf_token_free(struct bpf_token *token);
 extern int security_bpf_token_cmd(const struct bpf_token *token, enum bpf_cmd cmd);
 extern int security_bpf_token_capable(const struct bpf_token *token, int cap);
+extern int security_bpf_link_create(struct bpf_link *link);
+extern void security_bpf_link_free(struct bpf_link *link);
 #else
 static inline int security_bpf(int cmd, union bpf_attr *attr,
 			       unsigned int size, bool kernel)
@@ -2365,6 +2368,14 @@ static inline int security_bpf_token_capable(const struct bpf_token *token, int 
 {
 	return 0;
 }
+
+static inline int security_bpf_link_create(struct bpf_link *link)
+{
+	return 0;
+}
+
+static inline void security_bpf_link_free(struct bpf_link *link)
+{ }
 #endif /* CONFIG_SECURITY */
 #endif /* CONFIG_BPF_SYSCALL */
 

@@ -1968,6 +1968,9 @@ struct bpf_link {
 	 * link's semantics is determined by target attach hook
 	 */
 	bool sleepable;
+#ifdef CONFIG_SECURITY
+	void *security;
+#endif
 };
 
 struct bpf_link_ops {

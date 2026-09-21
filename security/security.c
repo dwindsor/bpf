@@ -365,6 +365,19 @@ static int lsm_bpf_token_alloc(struct bpf_token *token)
 {
 	return lsm_blob_alloc(&token->security, blob_sizes.lbs_bpf_token, GFP_KERNEL);
 }
+
+/**
+ * lsm_bpf_link_alloc - allocate a composite bpf_link blob
+ * @link: the bpf_link that needs a blob
+ *
+ * Allocate the bpf_link blob for all the modules
+ *
+ * Returns 0, or -ENOMEM if memory can't be allocated.
+ */
+static int lsm_bpf_link_alloc(struct bpf_link *link)
+{
+	return lsm_blob_alloc(&link->security, blob_sizes.lbs_bpf_link, GFP_KERNEL);
+}
 #endif /* CONFIG_BPF_SYSCALL */
 
 /**
@@ -5477,6 +5490,47 @@ void security_bpf_token_free(struct bpf_token *token)
 	call_void_hook(bpf_token_free, token);
 	kfree(token->security);
 	token->security = NULL;
+}
+
+/**
+ * security_bpf_link_create() - Check if BPF link creation is allowed
+ * @link: BPF link object
+ *
+ * Do a check when the kernel is about to expose a new BPF link to user
+ * space, before it can be reached through an fd or ID. This is also the
+ * point where LSM blob is allocated for LSMs that need them. The link's
+ * type, program and attach type are already set; its ID is not assigned
+ * yet.
+ *
+ * Return: Returns 0 on success, error on failure.
+ */
+int security_bpf_link_create(struct bpf_link *link)
+{
+	int rc;
+
+	rc = lsm_bpf_link_alloc(link);
+	if (unlikely(rc))
+		return rc;
+
+	rc = call_int_hook(bpf_link_create, link);
+	if (unlikely(rc))
+		security_bpf_link_free(link);
+	return rc;
+}
+
+/**
+ * security_bpf_link_free() - Free a BPF link's LSM blob
+ * @link: BPF link struct
+ *
+ * Clean up the security information stored inside BPF link. Called for
+ * every link that is torn down, including kernel-internal links that never
+ * went through security_bpf_link_create() and so have no blob.
+ */
+void security_bpf_link_free(struct bpf_link *link)
+{
+	call_void_hook(bpf_link_free, link);
+	kfree(link->security);
+	link->security = NULL;
 }
 #endif /* CONFIG_BPF_SYSCALL */
 

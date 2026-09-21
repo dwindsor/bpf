@@ -120,6 +120,7 @@ struct lsm_blob_sizes {
 	unsigned int lbs_bpf_map;
 	unsigned int lbs_bpf_prog;
 	unsigned int lbs_bpf_token;
+	unsigned int lbs_bpf_link;
 };
 
 /*

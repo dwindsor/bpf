@@ -3332,6 +3332,11 @@ static void bpf_link_free(struct bpf_link *link)
 	/* detach BPF program, clean up used resources */
 	if (link->prog)
 		ops->release(link);
+	/* Runs in process context; the link is no longer reachable by ID or
+	 * fd, but may still be observed by RCU readers until dealloc below.
+	 * None of those look at the LSM blob.
+	 */
+	security_bpf_link_free(link);
 	if (ops->dealloc_deferred) {
 		/*
 		 * Schedule BPF link deallocation, which will only then
@@ -3505,25 +3510,35 @@ static int bpf_link_alloc_id(struct bpf_link *link)
 int bpf_link_prime(struct bpf_link *link, struct bpf_link_primer *primer)
 {
 	struct file *file;
-	int fd, id;
+	int fd, id, err;
+
+	/* Allocate the LSM blob and let LSMs veto the link before it can be
+	 * reached through an fd or ID. Once the file exists the link is torn
+	 * down through bpf_link_free(), which frees the blob; before that we
+	 * have to free it by hand.
+	 */
+	err = security_bpf_link_create(link);
+	if (err)
+		return err;
 
 	fd = get_unused_fd_flags(O_CLOEXEC);
-	if (fd < 0)
-		return fd;
+	if (fd < 0) {
+		err = fd;
+		goto out_security;
+	}
 
 	id = bpf_link_alloc_id(link);
 	if (id < 0) {
-		put_unused_fd(fd);
-		return id;
+		err = id;
+		goto out_fd;
 	}
 
 	file = anon_inode_getfile("bpf_link",
 				  link->ops->poll ? &bpf_link_fops_poll : &bpf_link_fops,
 				  link, O_CLOEXEC);
 	if (IS_ERR(file)) {
-		bpf_link_free_id(id);
-		put_unused_fd(fd);
-		return PTR_ERR(file);
+		err = PTR_ERR(file);
+		goto out_id;
 	}
 
 	primer->link = link;
@@ -3531,6 +3546,14 @@ int bpf_link_prime(struct bpf_link *link, struct bpf_link_primer *primer)
 	primer->fd = fd;
 	primer->id = id;
 	return 0;
+
+out_id:
+	bpf_link_free_id(id);
+out_fd:
+	put_unused_fd(fd);
+out_security:
+	security_bpf_link_free(link);
+	return err;
 }
 
 int bpf_link_settle(struct bpf_link_primer *primer)
