@@ -5532,6 +5532,40 @@ void security_bpf_link_free(struct bpf_link *link)
 	kfree(link->security);
 	link->security = NULL;
 }
+
+/**
+ * security_bpf_link_detach() - Check if a BPF link may be detached
+ * @link: BPF link object
+ *
+ * Do a check when user space asks, via BPF_LINK_DETACH, to detach the
+ * program from the hook a link is attached to while leaving the link
+ * object itself alive. This does not cover the link being released
+ * because its last reference went away.
+ *
+ * Return: Returns 0 on success, error on failure.
+ */
+int security_bpf_link_detach(struct bpf_link *link)
+{
+	return call_int_hook(bpf_link_detach, link);
+}
+
+/**
+ * security_bpf_link_update() - Check if a BPF link may be updated
+ * @link: BPF link object
+ * @new_prog: program to attach in place of the current one, or NULL
+ * @new_map: map to attach in place of the current one, or NULL
+ *
+ * Do a check when user space asks, via BPF_LINK_UPDATE, to replace the
+ * program or map a link is attached with. Exactly one of @new_prog and
+ * @new_map is set, depending on the link type.
+ *
+ * Return: Returns 0 on success, error on failure.
+ */
+int security_bpf_link_update(struct bpf_link *link, struct bpf_prog *new_prog,
+			     struct bpf_map *new_map)
+{
+	return call_int_hook(bpf_link_update, link, new_prog, new_map);
+}
 #endif /* CONFIG_BPF_SYSCALL */
 
 /**

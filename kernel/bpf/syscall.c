@@ -5943,7 +5943,9 @@ static int link_update_map(struct bpf_link *link, union bpf_attr *attr)
 		goto out_put;
 	}
 
-	ret = link->ops->update_map(link, new_map, old_map);
+	ret = security_bpf_link_update(link, NULL, new_map);
+	if (!ret)
+		ret = link->ops->update_map(link, new_map, old_map);
 
 	if (old_map)
 		bpf_map_put(old_map);
@@ -5995,10 +5997,14 @@ static int link_update(union bpf_attr *attr)
 		goto out_put_progs;
 	}
 
-	if (link->ops->update_prog)
-		ret = link->ops->update_prog(link, new_prog, old_prog);
-	else
+	if (!link->ops->update_prog) {
 		ret = -EINVAL;
+		goto out_put_progs;
+	}
+
+	ret = security_bpf_link_update(link, new_prog, NULL);
+	if (!ret)
+		ret = link->ops->update_prog(link, new_prog, old_prog);
 
 out_put_progs:
 	if (old_prog)
@@ -6024,11 +6030,16 @@ static int link_detach(union bpf_attr *attr)
 	if (IS_ERR(link))
 		return PTR_ERR(link);
 
-	if (link->ops->detach)
-		ret = link->ops->detach(link);
-	else
+	if (!link->ops->detach) {
 		ret = -EOPNOTSUPP;
+		goto out_put_link;
+	}
 
+	ret = security_bpf_link_detach(link);
+	if (!ret)
+		ret = link->ops->detach(link);
+
+out_put_link:
 	bpf_link_put_direct(link);
 	return ret;
 }

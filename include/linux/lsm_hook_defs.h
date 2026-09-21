@@ -454,6 +454,9 @@ LSM_HOOK(int, 0, bpf_token_cmd, const struct bpf_token *token, enum bpf_cmd cmd)
 LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
 LSM_HOOK(int, 0, bpf_link_create, struct bpf_link *link)
 LSM_HOOK(void, LSM_RET_VOID, bpf_link_free, struct bpf_link *link)
+LSM_HOOK(int, 0, bpf_link_detach, struct bpf_link *link)
+LSM_HOOK(int, 0, bpf_link_update, struct bpf_link *link, struct bpf_prog *new_prog,
+	 struct bpf_map *new_map)
 #endif /* CONFIG_BPF_SYSCALL */
 
 LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
