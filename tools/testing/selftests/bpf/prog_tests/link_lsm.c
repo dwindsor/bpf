@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <test_progs.h>
 #include "test_link_lsm.skel.h"
+#include "test_link_seal.skel.h"
 
 /* A BPF LSM policy protects the link of another BPF LSM program: only one
  * trusted process may BPF_LINK_DETACH it. These tests check that the
@@ -64,6 +65,36 @@ static int policy_link_create(struct test_link_lsm *skel)
 {
 	return bpf_link_create(bpf_program__fd(skel->progs.policy), 0,
 			       BPF_LSM_MAC, NULL);
+}
+
+static int policy_link_create_sealed(struct test_link_lsm *skel)
+{
+	LIBBPF_OPTS(bpf_link_create_opts, opts, .flags = BPF_F_LINK_SEALED);
+
+	return bpf_link_create(bpf_program__fd(skel->progs.policy), 0,
+			       BPF_LSM_MAC, &opts);
+}
+
+/* Drop the self-reference of a sealed link through the bpf_testmod kfunc so
+ * the test does not leak it until reboot.
+ */
+static int force_unseal(int link_fd)
+{
+	struct { int link_fd; } args = { .link_fd = link_fd };
+	LIBBPF_OPTS(bpf_test_run_opts, opts,
+		.ctx_in = &args,
+		.ctx_size_in = sizeof(args),
+	);
+	struct test_link_seal *seal_skel;
+	int err;
+
+	seal_skel = test_link_seal__open_and_load();
+	if (!ASSERT_OK_PTR(seal_skel, "seal_skel_load"))
+		return -1;
+	err = bpf_prog_test_run_opts(bpf_program__fd(seal_skel->progs.unseal_link),
+				     &opts);
+	test_link_seal__destroy(seal_skel);
+	return err ?: opts.retval;
 }
 
 /* Detach the guarded link from a process that is not the trusted loader. */
@@ -137,7 +168,7 @@ struct loader {
 };
 
 static void loader_child(struct test_link_lsm *skel, int rd, int wr,
-			 const char *bpffs_dir)
+			 const char *bpffs_dir, bool sealed)
 {
 	char path[PATH_MAX];
 	int link_fd;
@@ -156,7 +187,8 @@ static void loader_child(struct test_link_lsm *skel, int rd, int wr,
 			_exit(13);
 	}
 
-	link_fd = policy_link_create(skel);
+	link_fd = sealed ? policy_link_create_sealed(skel) :
+			   policy_link_create(skel);
 	if (link_fd < 0)
 		_exit(14);
 	id = link_id(link_fd);
@@ -179,7 +211,7 @@ static void loader_child(struct test_link_lsm *skel, int rd, int wr,
 }
 
 static int loader_start(struct test_link_lsm *skel, struct loader *ld,
-			const char *bpffs_dir)
+			const char *bpffs_dir, bool sealed)
 {
 	int to_child[2], from_child[2];
 	char go = 'g';
@@ -193,7 +225,8 @@ static int loader_start(struct test_link_lsm *skel, struct loader *ld,
 	if (ld->pid == 0) {
 		close(to_child[1]);
 		close(from_child[0]);
-		loader_child(skel, to_child[0], from_child[1], bpffs_dir);
+		loader_child(skel, to_child[0], from_child[1], bpffs_dir,
+			     sealed);
 	}
 	close(to_child[0]);
 	close(from_child[1]);
@@ -227,11 +260,13 @@ static void loader_end(struct loader *ld, bool kill_it)
 /* Check the policy is in force right now: the link exists and we, not
  * being the trusted loader, cannot detach it.
  */
-static void check_guarded(struct test_link_lsm *skel, __u32 id)
+static void check_guarded(struct test_link_lsm *skel, __u32 id, bool sealed)
 {
 	ASSERT_TRUE(link_alive(id), "link_alive");
 	ASSERT_EQ(detach_from_untrusted(id), -EPERM, "our_detach_denied");
-	ASSERT_EQ(skel->bss->detach_hook_calls, 1, "hook_seen_our_detach");
+	/* a sealed link is refused before any LSM is asked */
+	ASSERT_EQ(skel->bss->detach_hook_calls, sealed ? 0 : 1,
+		  "hook_seen_our_detach");
 	ASSERT_EQ(skel->bss->free_hook_calls, 0, "not_freed_yet");
 }
 
@@ -243,9 +278,9 @@ static void test_loader_killed(struct test_link_lsm *skel)
 {
 	struct loader ld;
 
-	if (!ASSERT_OK(loader_start(skel, &ld, NULL), "loader_start"))
+	if (!ASSERT_OK(loader_start(skel, &ld, NULL, false), "loader_start"))
 		return;
-	check_guarded(skel, ld.id);
+	check_guarded(skel, ld.id, false);
 
 	loader_end(&ld, true);
 
@@ -269,9 +304,9 @@ static void test_pinned_in_dying_mntns(struct test_link_lsm *skel)
 
 	if (!ASSERT_OK_PTR(mkdtemp(dir), "mkdtemp"))
 		return;
-	if (!ASSERT_OK(loader_start(skel, &ld, dir), "loader_start"))
+	if (!ASSERT_OK(loader_start(skel, &ld, dir, false), "loader_start"))
 		goto out;
-	check_guarded(skel, ld.id);
+	check_guarded(skel, ld.id, false);
 
 	loader_end(&ld, false);
 
@@ -284,6 +319,40 @@ static void test_pinned_in_dying_mntns(struct test_link_lsm *skel)
 	skel->bss->guarded_link_id = 0;
 out:
 	rmdir(dir);
+}
+
+/* Same as test_loader_killed, but the loader creates the link sealed. The
+ * link now holds a reference to itself, so the loader's death drops a
+ * reference that is not the last one and the attachment stays in place.
+ * The same policy still denies detach to everyone else, and sealing denies
+ * it to everyone.
+ */
+static void test_sealed_survives_loader_kill(struct test_link_lsm *skel)
+{
+	struct loader ld;
+	int fd;
+
+	if (!ASSERT_OK(loader_start(skel, &ld, NULL, true), "loader_start"))
+		return;
+	check_guarded(skel, ld.id, true);
+
+	loader_end(&ld, true);
+
+	/* give the deferred teardown every chance to happen; it must not */
+	ASSERT_FALSE(wait_link_gone(ld.id), "link_alive_after_kill");
+	ASSERT_EQ(skel->bss->free_hook_calls, 0, "not_freed");
+	ASSERT_EQ(detach_from_untrusted(ld.id), -EPERM, "detach_still_denied");
+
+	fd = bpf_link_get_fd_by_id(ld.id);
+	if (ASSERT_GE(fd, 0, "get_fd_by_id")) {
+		if (ASSERT_OK(force_unseal(fd), "force_unseal")) {
+			close(fd);
+			ASSERT_TRUE(wait_link_gone(ld.id), "freed_after_unseal");
+		} else {
+			close(fd);
+		}
+	}
+	skel->bss->guarded_link_id = 0;
 }
 
 static void reset_counters(struct test_link_lsm *skel)
@@ -321,6 +390,10 @@ void test_link_lsm(void)
 	if (test__start_subtest("pinned_in_dying_mntns")) {
 		reset_counters(skel);
 		test_pinned_in_dying_mntns(skel);
+	}
+	if (test__start_subtest("sealed_survives_loader_kill")) {
+		reset_counters(skel);
+		test_sealed_survives_loader_kill(skel);
 	}
 out:
 	test_link_lsm__destroy(skel);
