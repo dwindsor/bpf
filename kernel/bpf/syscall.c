@@ -3591,22 +3591,46 @@ struct bpf_link *bpf_link_get_from_fd(u32 ufd)
 }
 EXPORT_SYMBOL_NS(bpf_link_get_from_fd, "BPF_INTERNAL");
 
-static void bpf_tracing_link_release(struct bpf_link *link)
+/* Unlink the program from its trampoline exactly once. Both BPF_LINK_DETACH
+ * and the final release of the link end up here; whichever comes first does
+ * the work. The trampoline and target program references are kept until
+ * release so that show_fdinfo() and fill_link_info() stay valid on a
+ * detached link.
+ */
+static void bpf_tracing_link_unlink(struct bpf_tracing_link *tr_link)
 {
-	struct bpf_tracing_link *tr_link =
-		container_of(link, struct bpf_tracing_link, link.link);
 	int err;
+
+	if (test_and_set_bit(0, &tr_link->detached))
+		return;
 
 	err = bpf_trampoline_unlink_prog(&tr_link->link.node,
 					tr_link->trampoline,
 					tr_link->tgt_prog);
 	WARN_ONCE(err, "bpf_trampoline_unlink_prog failed: %d\n", err);
+}
+
+static void bpf_tracing_link_release(struct bpf_link *link)
+{
+	struct bpf_tracing_link *tr_link =
+		container_of(link, struct bpf_tracing_link, link.link);
+
+	bpf_tracing_link_unlink(tr_link);
 
 	bpf_trampoline_put(tr_link->trampoline);
 
 	/* tgt_prog is NULL if target is a kernel function */
 	if (tr_link->tgt_prog)
 		bpf_prog_put(tr_link->tgt_prog);
+}
+
+static int bpf_tracing_link_detach(struct bpf_link *link)
+{
+	struct bpf_tracing_link *tr_link =
+		container_of(link, struct bpf_tracing_link, link.link);
+
+	bpf_tracing_link_unlink(tr_link);
+	return 0;
 }
 
 static void bpf_tracing_link_dealloc(struct bpf_link *link)
@@ -3652,6 +3676,7 @@ static int bpf_tracing_link_fill_link_info(const struct bpf_link *link,
 
 static const struct bpf_link_ops bpf_tracing_link_lops = {
 	.release = bpf_tracing_link_release,
+	.detach = bpf_tracing_link_detach,
 	.dealloc = bpf_tracing_link_dealloc,
 	.show_fdinfo = bpf_tracing_link_show_fdinfo,
 	.fill_link_info = bpf_tracing_link_fill_link_info,

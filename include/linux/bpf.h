@@ -2022,6 +2022,10 @@ struct bpf_tracing_link {
 	struct bpf_tramp_node fexit;
 	struct bpf_trampoline *trampoline;
 	struct bpf_prog *tgt_prog;
+	/* set once the program has been unlinked from the trampoline, either
+	 * by BPF_LINK_DETACH or by the link being released
+	 */
+	unsigned long detached;
 };
 
 struct bpf_tracing_multi_node {
