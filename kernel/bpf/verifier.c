@@ -19791,8 +19791,10 @@ static void clean_live_states(struct bpf_verifier_env *env, int insn,
 		if (sl->state.cleaned)
 			/* all regs in this state in all frames were already marked */
 			continue;
-		if (incomplete_read_marks(env, &sl->state))
-			continue;
+		/* Stack liveness is complete for states with no pending branches.
+		 * SCC backedges defer precision propagation, not liveness; keeping
+		 * dead stack slots here prevents otherwise valid state pruning.
+		 */
 		clean_verifier_state(env, &sl->state);
 	}
 }

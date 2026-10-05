@@ -783,4 +783,66 @@ __naked void check_add_const_regsafe_off(void)
 	: __clobber_common);
 }
 
+/* Each conditional store leaves two different values in a dead stack slot.
+ * Pending callback SCC backedges must not prevent cleaning these slots:
+ * retaining them makes the verifier explore exponentially many states.
+ */
+#define DEAD_STACK_SLOT(off) \
+	"call %[bpf_get_prandom_u32];" \
+	"if r0 == 0 goto 1f;" \
+	"*(u64 *)(r10 - " #off ") = 1;" \
+	"goto 2f;" \
+	"1: *(u64 *)(r10 - " #off ") = 2;" \
+	"2:;"
+
+__used __naked
+static void dead_stack_cb(void)
+{
+	asm volatile (
+		DEAD_STACK_SLOT(8)
+		DEAD_STACK_SLOT(16)
+		DEAD_STACK_SLOT(24)
+		DEAD_STACK_SLOT(32)
+		DEAD_STACK_SLOT(40)
+		DEAD_STACK_SLOT(48)
+		DEAD_STACK_SLOT(56)
+		DEAD_STACK_SLOT(64)
+		DEAD_STACK_SLOT(72)
+		DEAD_STACK_SLOT(80)
+		DEAD_STACK_SLOT(88)
+		DEAD_STACK_SLOT(96)
+		DEAD_STACK_SLOT(104)
+		DEAD_STACK_SLOT(112)
+		DEAD_STACK_SLOT(120)
+		DEAD_STACK_SLOT(128)
+		DEAD_STACK_SLOT(136)
+		DEAD_STACK_SLOT(144)
+		"r0 = 0;"
+		"exit;"
+		:
+		: __imm(bpf_get_prandom_u32)
+		: __clobber_all
+	);
+}
+
+#undef DEAD_STACK_SLOT
+
+SEC("?raw_tp")
+__success __flag(BPF_F_TEST_STATE_FREQ) __log_level(4)
+__naked void callback_dead_stack(void)
+{
+	asm volatile (
+		"r1 = 100;"
+		"r2 = dead_stack_cb ll;"
+		"r3 = 0;"
+		"r4 = 0;"
+		"call %[bpf_loop];"
+		"r0 = 0;"
+		"exit;"
+		:
+		: __imm(bpf_loop)
+		: __clobber_all
+	);
+}
+
 char _license[] SEC("license") = "GPL";
